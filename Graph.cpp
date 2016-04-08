@@ -1,6 +1,8 @@
 #include "Graph.h"
 #include <iostream>
 
+using namespace std;
+
 Graph::Graph(int V){
 	this->nV = V;
 	adj = new adjList(0);

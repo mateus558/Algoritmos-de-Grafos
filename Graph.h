@@ -1,17 +1,5 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
-#include <assert.h>
-#include <iostream>
-
-using namespace std;
-
-class Vertex{
-	int id;
-};
-
-class Edge{
-	int weight;
-};
 
 struct adjList{
 	int id;
