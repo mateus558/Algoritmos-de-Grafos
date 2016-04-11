@@ -10,6 +10,7 @@ int main(){
 	while(cin >> u >> v){
 		grafo.addEdge(u, v);
 	}
-	//grafo.addVertex(6);
+	grafo.addVertex(6);
+	grafo.addEdge(6,1);
 	grafo.print();
 }
