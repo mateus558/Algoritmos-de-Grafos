@@ -3,19 +3,25 @@
 
 using namespace std;
 
+adjList::adjList(){
+	this->next = NULL;
+	this->adjL = NULL;
+}
+
 Graph::Graph(){
 	this->nV = 0;
-	adj = NULL;
+	adj = new adjList;
 }
 
 Graph::Graph(int V){
 	this->nV = V;
-	adj = new adjList(1);
+	adj = new adjList;
 	adjList *itr = adj;
-	
-	for(int i = 2; i <= V; i++){
-		itr->next= new adjList(i);
-		itr->adjL = NULL;
+
+	for(int i = 1; i <= V; i++){
+		itr->id = i;
+		if(i != V)
+			itr->next = new adjList;
 		itr = itr->next;
 	}
 
@@ -28,7 +34,7 @@ void Graph::addEdge(int u, int v){
 	while(itr->id != u){
 		itr = itr->next;
 	}
-	
+
 	while(itr->adjL != NULL){
 		itr = itr->adjL;
 	}
@@ -60,10 +66,12 @@ void Graph::addVertex(int v){
 
 	if(itr->next == NULL){
 		itr->next = new adjList(v);
+		nV++;
 	}else if(itr->id > v){
 		adjList *temp = itr->next;
 		itr->next = new adjList(v);
 		itr->next->next = temp;
+		nV++;
 	}else{
 		cout << "Vertex " << v << " already exist" << endl;
 	}

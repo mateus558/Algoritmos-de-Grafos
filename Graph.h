@@ -1,14 +1,18 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-struct adjList{
+class adjList{
 	int id;
 	adjList *next;
 	adjList *adjL;
-	
+
+	public:
+	adjList();
 	adjList(int id){
 		this->id = id;
-	}	
+	}
+	
+	friend class Graph;	
 };
 
 class Graph{
