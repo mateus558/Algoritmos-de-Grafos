@@ -16,7 +16,10 @@ private:
 	int nV;
 	adjList *adj;
 public:
+	Graph();
 	Graph(int V);
+	void print();
+	void addVertex(int v);
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
 	

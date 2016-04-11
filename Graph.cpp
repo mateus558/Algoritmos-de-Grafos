@@ -3,6 +3,11 @@
 
 using namespace std;
 
+Graph::Graph(){
+	this->nV = 0;
+	adj = NULL;
+}
+
 Graph::Graph(int V){
 	this->nV = V;
 	adj = new adjList(0);
@@ -15,10 +20,10 @@ Graph::Graph(int V){
 	}
 	
 	itr = adj;
-	while(itr != NULL){
+	/*while(itr != NULL){
 		cout << itr->id << endl;
 		itr = itr->next;
-	}	
+	}*/	
 }
 
 void Graph::addEdge(int u, int v){
@@ -45,18 +50,36 @@ void Graph::addEdge(int u, int v){
 	}
 	
 	itr->adjL = new adjList(u-1);
+}
 
-	itr = adj;
+void Graph::addVertex(int v){
+	adjList *itr = adj;
+	
+	while(itr != NULL || itr->id < v-1){
+		itr = itr->next;
+	}
+	
+	if(itr == NULL){
+		itr = new adjList(v - 1);
+	}else if(itr->id >= v - 1){
+		adjList *temp = itr->next;
+		itr->next = new adjList(v - 1);
+		itr->next->next = temp;
+	}
+}
+
+void Graph::print(){
+	adjList *itr = adj;
+	
 	while(itr != NULL){
 		cout << itr->id << " ";
 		adjList *itr1 = itr->adjL;
 		while(itr1 != NULL){
 			cout << itr1->id << " ";
-			itr1 = itr1->adjL;	
+			itr1 = itr1->adjL;
 		}
 		cout << endl;
 		itr = itr->next;
 	}
 }
-
 

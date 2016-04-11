@@ -7,15 +7,9 @@ int main(){
 	Graph grafo(5);
 	int u,v;	
 	
-	cin >> u >> v;
-	grafo.addEdge(u,v);
-	
-	cin >> u >> v;
-	grafo.addEdge(u,v);
-	cin >> u >> v;
-	grafo.addEdge(u,v);
-	cin >> u >> v;
-	grafo.addEdge(u,v);
-	
-	cout << "deu" << endl;
+	while(cin >> u >> v){
+		grafo.addEdge(u, v);
+	}
+	//grafo.addVertex(6);
+	grafo.print();
 }
