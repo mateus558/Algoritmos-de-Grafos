@@ -3,59 +3,83 @@
 
 using namespace std;
 
-adjList::adjList(){
+Edge::Edge(int v){
+	this->id = v;
+	next = NULL;
+}
+
+Vertex::Vertex(){
 	this->next = NULL;
 	this->adjL = NULL;
 }
 
-Graph::Graph(){
-	this->nV = 0;
-	adj = new adjList;
+Vertex::Vertex(int id){
+	this->id = id;
 }
 
-Graph::Graph(int V){
+Graph::Graph(){
+	this->nV = 0;
+	isOriented = false;
+	adjList = new Vertex;
+}
+
+Graph::Graph(int V, bool isOriented){
+	this->isOriented = isOriented;
 	this->nV = V;
-	adj = new adjList;
-	adjList *itr = adj;
+	adjList = new Vertex;
+	Vertex *itr = adjList;
 
 	for(int i = 1; i <= V; i++){
 		itr->id = i;
 		if(i != V)
-			itr->next = new adjList;
+			itr->next = new Vertex;
 		itr = itr->next;
 	}
-
-	itr = adj;	
+	
+	itr = adjList;	
 }
 
 void Graph::addEdge(int u, int v){
-	adjList *itr = adj;
-	
+	Vertex *itr = adjList;
+
 	while(itr->id != u){
 		itr = itr->next;
 	}
-
-	while(itr->adjL != NULL){
-		itr = itr->adjL;
+	
+	Edge *eItr = itr->adjL;
+	
+	if(itr->adjL != NULL){
+		while(eItr->next != NULL){
+			eItr = eItr->next;
+		}
+		
+		eItr->next = new Edge(v);
+	}else{
+		itr->adjL = new Edge(v);
 	}
 	
-	itr->adjL = new adjList(v);
+	if(!isOriented){
+		itr = adjList;
 	
-	itr = adj;
+		while(itr->id != v){
+			itr = itr->next;
+		}
 	
-	while(itr->id != v){
-		itr = itr->next;
+		Edge *eItr = itr->adjL;
+		if(itr->adjL != NULL){
+			while(eItr->next != NULL){
+				eItr = eItr->next;
+			}
+			
+			eItr->next = new Edge(u);	
+		}else{
+			itr->adjL = new Edge(u);
+		}
 	}
-	
-	while(itr->adjL != NULL){
-		itr = itr->adjL;
-	}
-	
-	itr->adjL = new adjList(u);
 }
 
 void Graph::addVertex(int v){
-	adjList *itr = adj;
+	Vertex *itr = adjList;
 	
 	while(itr->next != NULL){
 		if(itr->next->id > v){
@@ -65,11 +89,11 @@ void Graph::addVertex(int v){
 	}
 
 	if(itr->next == NULL){
-		itr->next = new adjList(v);
+		itr->next = new Vertex(v);
 		nV++;
 	}else if(itr->id > v){
-		adjList *temp = itr->next;
-		itr->next = new adjList(v);
+		Vertex *temp = itr->next;
+		itr->next = new Vertex(v);
 		itr->next->next = temp;
 		nV++;
 	}else{
@@ -78,14 +102,14 @@ void Graph::addVertex(int v){
 }
 
 void Graph::print(){
-	adjList *itr = adj;
+	Vertex *itr = adjList;
 	
 	while(itr != NULL){
 		cout << itr->id << " ";
-		adjList *itr1 = itr->adjL;
+		Edge *itr1 = itr->adjL;
 		while(itr1 != NULL){
 			cout << itr1->id << " ";
-			itr1 = itr1->adjL;
+			itr1 = itr1->next;
 		}
 		cout << endl;
 		itr = itr->next;
