@@ -24,9 +24,10 @@ struct Edge{
 
 class Graph{
 private:
-	int nV;
-	bool isOriented;
-	std::vector<Vertex*> adjList;
+	int nV;	//Número de Vértices
+	int nE;	//Número de arestas
+	bool isOriented;	//Booleano dizendo se o grafo é orientado
+	std::vector<Vertex*> adjList;	//Lista de adjacências
 public:
 	Graph();
 	Graph(int V, bool isOriented);

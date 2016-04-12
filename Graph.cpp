@@ -17,8 +17,10 @@ Vertex::Vertex(int id){
 	this->adj = NULL;
 }
 
+//Por padrão o construtor cria um grafo vazio e nao-orientado
 Graph::Graph(){
 	this->nV = 0;
+	this->nE = 0;
 	isOriented = false;
 }
 
@@ -45,6 +47,8 @@ void Graph::addEdge(int u, int v){
 		adjList[u]->adj = new Edge(v);
 	}
 	
+	nE++;
+	
 	if(!isOriented){
 		itr = adjList[v]->adj;
 		
@@ -56,6 +60,8 @@ void Graph::addEdge(int u, int v){
 		}else{
 			adjList[v]->adj = new Edge(u);
 		}
+		
+		nE++;
 	}
 }
 
@@ -104,9 +110,13 @@ Vertex::~Vertex(){
 }
 
 Graph::~Graph(){
+	nV = 0;
+	nE = 0;
+	
 	for(int i = 0; i <= nV; i++){
 		delete adjList[i];
 	}
 	adjList.clear();
+	
 	cout << "\nGraph deleted successfully!" << endl;
 }
