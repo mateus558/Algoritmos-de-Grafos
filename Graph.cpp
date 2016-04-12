@@ -116,3 +116,34 @@ void Graph::print(){
 	}
 }
 
+Vertex::~Vertex(){
+	Vertex *current = next;
+	
+	while(current != NULL){
+		Vertex *prox = current->next;
+		delete current->adjL;
+		delete current;
+		current = prox;
+	}	
+
+	next = NULL;
+}
+
+Edge::~Edge(){
+	Edge *current = next;
+	
+	while(current != NULL){
+		Edge *prox = current->next;
+		delete current;
+		current = prox;
+	}	
+
+	next = NULL; 
+}
+
+Graph::~Graph(){
+	nV = 0;
+	delete adjList;
+	
+	cout << "\nGraph deleted successfully!" << endl;
+}
