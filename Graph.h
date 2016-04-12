@@ -1,27 +1,34 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
+#include <vector>
 
-class adjList{
+struct Edge;
+
+class Vertex{
+private:
 	int id;
-	adjList *next;
-	adjList *adjL;
-
-	public:
-	adjList();
-	adjList(int id){
-		this->id = id;
-	}
-	
+	Edge *adj;
+public:
+	Vertex();
+	Vertex(int id);
 	friend class Graph;	
+};
+
+struct Edge{
+	int id;
+	Edge *next;
+
+	Edge(int v);
 };
 
 class Graph{
 private:
 	int nV;
-	adjList *adj;
+	bool isOriented;
+	std::vector<Vertex*> adjList;
 public:
 	Graph();
-	Graph(int V);
+	Graph(int V, bool isOriented);
 	void print();
 	void addVertex(int v);
 	void addEdge(int u, int v);

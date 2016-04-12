@@ -3,92 +3,91 @@
 
 using namespace std;
 
-adjList::adjList(){
-	this->next = NULL;
-	this->adjL = NULL;
+Edge::Edge(int v){
+	this->id = v;
+	next = NULL;
+}
+
+Vertex::Vertex(){
+	this->adj = NULL;
+}
+
+Vertex::Vertex(int id){
+	this->id = id;
+	this->adj = NULL;
 }
 
 Graph::Graph(){
 	this->nV = 0;
-	adj = new adjList;
+	isOriented = false;
 }
 
-Graph::Graph(int V){
+Graph::Graph(int V, bool isOriented){
+	this->isOriented = isOriented;
 	this->nV = V;
-	adj = new adjList;
-	adjList *itr = adj;
+	adjList = vector<Vertex*>(V+1);
 
 	for(int i = 1; i <= V; i++){
-		itr->id = i;
-		if(i != V)
-			itr->next = new adjList;
-		itr = itr->next;
-	}
-
-	itr = adj;	
+		adjList[i] = new Vertex(i);
+	}	
 }
 
 void Graph::addEdge(int u, int v){
-	adjList *itr = adj;
+	Edge *itr = adjList[u]->adj;
 	
-	while(itr->id != u){
-		itr = itr->next;
-	}
-
-	while(itr->adjL != NULL){
-		itr = itr->adjL;
-	}
-	
-	itr->adjL = new adjList(v);
-	
-	itr = adj;
-	
-	while(itr->id != v){
-		itr = itr->next;
+	if(itr != NULL){
+		while(itr->next != NULL){
+			itr = itr->next;
+		}
+		
+		itr->next = new Edge(v);
+	}else{
+		adjList[u]->adj = new Edge(v);
 	}
 	
-	while(itr->adjL != NULL){
-		itr = itr->adjL;
+	if(!isOriented){
+		itr = adjList[v]->adj;
+		
+		if(itr != NULL){
+			while(itr->next != NULL){
+				itr = itr->next;
+			}		
+			itr->next = new Edge(u);	
+		}else{
+			adjList[v]->adj = new Edge(u);
+		}
 	}
-	
-	itr->adjL = new adjList(u);
 }
 
 void Graph::addVertex(int v){
-	adjList *itr = adj;
 	
-	while(itr->next != NULL){
-		if(itr->next->id > v){
-			break;
-		}
-		itr = itr->next;
-	}
-
-	if(itr->next == NULL){
-		itr->next = new adjList(v);
-		nV++;
-	}else if(itr->id > v){
-		adjList *temp = itr->next;
-		itr->next = new adjList(v);
-		itr->next->next = temp;
-		nV++;
-	}else{
+	if(adjList.size() > v){
 		cout << "Vertex " << v << " already exist" << endl;
+		return ;
 	}
+	
+	vector<Vertex*> temp = adjList;
+	vector<Vertex*> newAdj(nV + 2); 
+	
+	nV++;
+	
+	for(int i = 1; i < nV; i++){
+		newAdj[i] = temp[i];
+	} 
+	
+	newAdj[v] = new Vertex(v);
+	adjList = newAdj;
 }
 
 void Graph::print(){
-	adjList *itr = adj;
-	
-	while(itr != NULL){
-		cout << itr->id << " ";
-		adjList *itr1 = itr->adjL;
-		while(itr1 != NULL){
-			cout << itr1->id << " ";
-			itr1 = itr1->adjL;
+	for(int i = 1; i <= nV; i++){
+		Edge *itr = adjList[i]->adj;
+		cout << adjList[i]->id << " ";
+		while(itr != NULL){
+			cout << itr->id << " ";
+			itr = itr->next;
 		}
 		cout << endl;
-		itr = itr->next;
 	}
 }
 
