@@ -91,3 +91,22 @@ void Graph::print(){
 	}
 }
 
+Vertex::~Vertex(){
+	Edge *current = adj;
+	
+	while(current != NULL){
+		Edge *next = current->next;
+		delete current;
+		current = next;
+	}
+	
+	adj = NULL;
+}
+
+Graph::~Graph(){
+	for(int i = 0; i <= nV; i++){
+		delete adjList[i];
+	}
+	adjList.clear();
+	cout << "\nGraph deleted successfully!" << endl;
+}
