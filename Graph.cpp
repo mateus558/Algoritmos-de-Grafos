@@ -10,6 +10,7 @@ Edge::Edge(int v){
 
 Vertex::Vertex(){
 	this->next = NULL;
+	this->degree = 0;
 	this->adjL = NULL;
 }
 
@@ -42,13 +43,29 @@ Graph::Graph(int V, bool isOriented){
 	itr = adjList;	
 }
 
+int Graph::getOrder(){
+	return nV;
+}
+
+int Graph::getDegree(int v){
+	Vertex *itr = adjList;
+	
+	while(itr != NULL && itr->id != v){
+		itr = itr->next;
+	}
+	
+	return (itr == NULL)?-1:itr->degree;
+}
+
 void Graph::addEdge(int u, int v){
 	Vertex *itr = adjList;
 
 	while(itr->id != u){
 		itr = itr->next;
 	}
-	
+
+	itr->degree++;
+
 	Edge *eItr = itr->adjL;
 	
 	if(itr->adjL != NULL){
@@ -69,13 +86,15 @@ void Graph::addEdge(int u, int v){
 		while(itr->id != v){
 			itr = itr->next;
 		}
-	
+		
+		itr->degree++;
+		
 		Edge *eItr = itr->adjL;
+
 		if(itr->adjL != NULL){
 			while(eItr->next != NULL){
 				eItr = eItr->next;
-			}
-			
+			}			
 			eItr->next = new Edge(u);	
 		}else{
 			itr->adjL = new Edge(u);
@@ -124,6 +143,7 @@ void Graph::print(){
 
 Vertex::~Vertex(){
 	Vertex *current = next;
+	degree = 0;
 	
 	while(current != NULL){
 		Vertex *prox = current->next;

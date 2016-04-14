@@ -6,6 +6,7 @@ struct Edge;
 class Vertex{
 private:
 	int id;
+	int degree;
 	Vertex *next;
 	Edge *adjL;
 
@@ -35,8 +36,11 @@ public:
 	Graph(int V, bool isOriented);
 	void print();
 	void addVertex(int v);
+	void removeVertex(int v);
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
+	int getOrder();
+	int getDegree(int v);
 	~Graph();
 };
 

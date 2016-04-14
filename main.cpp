@@ -13,6 +13,7 @@ int main(){
 
 	grafo->addVertex(6);
 	grafo->addEdge(6,1);
+	grafo->addEdge(6,2);
 	grafo->print();
 	
 	delete grafo;
