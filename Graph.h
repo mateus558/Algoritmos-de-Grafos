@@ -7,6 +7,7 @@ struct Edge;
 class Vertex{
 private:
 	int id;
+	int degree;
 	Edge *adj;
 public:
 	Vertex();
@@ -35,6 +36,8 @@ public:
 	void addVertex(int v);
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
+	int getOrder();
+	int getDegree(int v);
 	~Graph();
 	
 };

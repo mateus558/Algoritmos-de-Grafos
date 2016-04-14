@@ -34,6 +34,14 @@ Graph::Graph(int V, bool isOriented){
 	}	
 }
 
+int Graph::getOrder(){
+	return nV;
+}
+
+int Graph::getDegree(int v){
+	return (v > adjList.size()-1)?-1:adjList[v]->degree;
+}
+
 void Graph::addEdge(int u, int v){
 	Edge *itr = adjList[u]->adj;
 	
@@ -99,6 +107,7 @@ void Graph::print(){
 
 Vertex::~Vertex(){
 	Edge *current = adj;
+	degree = 0;
 	
 	while(current != NULL){
 		Edge *next = current->next;
