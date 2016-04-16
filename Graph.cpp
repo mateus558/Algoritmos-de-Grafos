@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <stack>
 #include <iostream>
 
 using namespace std;
@@ -126,16 +127,92 @@ void Graph::addVertex(int v){
 	}
 }
 
+void Graph::deleteEdge(int u, int v){
+	Vertex *itr = adjList;
+		
+	while(itr->next->id != u){
+		itr = itr->next;
+	}
+		
+	Edge *itrE = itr->adjL;
+		
+	while(itrE->next->id != v){
+		itrE = itrE->next;
+	}
+			
+	Edge *temp = itrE->next->next;
+			
+	delete itrE->next;
+			
+	itrE->next = temp;
+}
+
+void Graph::removeVertex(int v){
+	Vertex *itr = adjList;
+	
+	while(itr != NULL && itr->next->id != v){
+		itr = itr->next;
+	}
+	
+	Edge *itrE = itr->adjL;
+	stack<Edge*> stck;	
+	
+	if(!isOriented){
+		while(itrE != NULL){
+			stck.push(itrE);
+			itrE = itrE->next;
+		}
+	}
+	
+	Vertex *temp = itr->next->next;
+	
+	delete itr->next;
+	
+	itr->next = temp;
+	
+	if(!isOriented){
+		while(!stck.empty()){
+			Edge *temp1 = stck.top();
+			int id = temp1->id;
+			this->deleteEdge(id, v);
+			stck.pop();
+		}
+	}
+}
+
+int Graph::isRegular(){
+	Vertex *itr = adjList;
+	int degree = adjList->degree;
+	
+	while(itr != NULL && itr->degree == degree){
+		itr = itr->next;
+	}
+	
+	return (itr == NULL)?degree:-1;
+}
+
+bool Graph::isComplete(){
+	Vertex *itr = adjList;
+	
+	while(itr != NULL && itr->degree == nV - 1){
+		itr = itr->next;
+	}
+	
+	return (itr == NULL);
+}
+
 void Graph::print(){
 	Vertex *itr = adjList;
 	
 	while(itr != NULL){
 		cout << itr->id << " ";
 		Edge *itr1 = itr->adjL;
+		
 		while(itr1 != NULL){
 			cout << itr1->id << " ";
 			itr1 = itr1->next;
 		}
+		
 		cout << endl;
 		itr = itr->next;
 	}
@@ -143,7 +220,8 @@ void Graph::print(){
 
 Vertex::~Vertex(){
 	Vertex *current = next;
-	degree = 0;
+	degree = -1;
+	id = -1;
 	
 	while(current != NULL){
 		Vertex *prox = current->next;

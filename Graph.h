@@ -17,12 +17,13 @@ public:
 	friend class Graph;	
 };
 
-struct Edge{
+class Edge{
 	int id;
 	Edge *next;
 
 	Edge(int v);
 	~Edge();
+	friend class Graph;
 };
 
 class Graph{
@@ -41,6 +42,8 @@ public:
 	void deleteEdge(int u, int v);
 	int getOrder();
 	int getDegree(int v);
+	int isRegular();
+	bool isComplete();
 	~Graph();
 };
 
