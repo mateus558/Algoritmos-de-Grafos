@@ -48,7 +48,7 @@ int Graph::getOrder(){
 	return nV;
 }
 
-int Graph::getDegree(int v){
+int Graph::getVertexDegree(int v){
 	Vertex *itr = adjList;
 	
 	while(itr != NULL && itr->id != v){
@@ -64,23 +64,22 @@ void Graph::addEdge(int u, int v){
 	while(itr->id != u){
 		itr = itr->next;
 	}
-
 	itr->degree++;
 
 	Edge *eItr = itr->adjL;
-	
+	Edge *dad = eItr;
 	if(itr->adjL != NULL){
-		while(eItr->next != NULL){
+		while(eItr != NULL && eItr->id <= v){
+			dad = eItr;
 			eItr = eItr->next;
 		}
-		
-		eItr->next = new Edge(v);
-	}else{
-		itr->adjL = new Edge(v);
-	}
-	
+
+		Edge *new_edge = new Edge(v);
+		new_edge->next = eItr;
+		dad->next = new_edge;
+	}else itr->adjL = new Edge(v);
 	nE++;	
-		
+	
 	if(!isOriented){
 		itr = adjList;
 	
@@ -106,54 +105,60 @@ void Graph::addEdge(int u, int v){
 
 void Graph::addVertex(int v){
 	Vertex *itr = adjList;
+	Vertex *dad = itr;
 	
-	while(itr->next != NULL){
-		if(itr->next->id > v){
-			break;
-		}
+	while(itr != NULL && itr->id <= v){
+		dad = itr;
+		itr = itr->next;
+	}
+	
+	Vertex *new_vertex = new Vertex(v);
+
+	new_vertex->next = itr;
+	dad->next = new_vertex;
+}
+//Por algum motivo está deletando o vértice errado, lembrar de acertar
+void Graph::auxDeleteEdge(int u, int v){
+	Vertex *itr = adjList;
+
+	while(itr != NULL && itr->id != u){
 		itr = itr->next;
 	}
 
-	if(itr->next == NULL){
-		itr->next = new Vertex(v);
-		nV++;
-	}else if(itr->id > v){
-		Vertex *temp = itr->next;
-		itr->next = new Vertex(v);
-		itr->next->next = temp;
-		nV++;
+	Edge *adj = itr->adjL;	
+	Edge *prev = adj;
+
+	while(adj != NULL && adj->id != v){
+		prev = adj;
+		adj = adj->next;
+	}	
+	
+	if(adj == itr->adjL){
+		Edge *temp = adj->next;
+		itr->adjL = NULL;
+		itr->adjL = temp;
 	}else{
-		cout << "Vertex " << v << " already exist" << endl;
+		prev->next = adj->next;
 	}
 }
 
 void Graph::deleteEdge(int u, int v){
-	Vertex *itr = adjList;
-		
-	while(itr->next->id != u){
-		itr = itr->next;
-	}
-		
-	Edge *itrE = itr->adjL;
-		
-	while(itrE->next->id != v){
-		itrE = itrE->next;
-	}
-			
-	Edge *temp = itrE->next->next;
-			
-	delete itrE->next;
-			
-	itrE->next = temp;
+	this->auxDeleteEdge(u, v);
+	
+	if(!isOriented){
+		this->auxDeleteEdge(v, u);
+	}	
 }
-
+//Terminar depois
 void Graph::removeVertex(int v){
 	Vertex *itr = adjList;
-	
-	while(itr != NULL && itr->next->id != v){
+	Vertex *prev = itr;
+	cout <<"removing "<< v <<endl;
+	while(itr != NULL && itr->id != v){
+		prev = itr;
 		itr = itr->next;
 	}
-	
+
 	Edge *itrE = itr->adjL;
 	stack<Edge*> stck;	
 	
@@ -163,21 +168,19 @@ void Graph::removeVertex(int v){
 			itrE = itrE->next;
 		}
 	}
-	
-	Vertex *temp = itr->next->next;
-	
-	delete itr->next;
-	
-	itr->next = temp;
-	
+
 	if(!isOriented){
 		while(!stck.empty()){
 			Edge *temp1 = stck.top();
-			int id = temp1->id;
-			this->deleteEdge(id, v);
+			int id = temp1->id;	
+			this->deleteEdge(id, v);	
 			stck.pop();
 		}
 	}
+	Vertex *temp = itr->next;
+	
+	prev->next = temp;
+	itr = temp;
 }
 
 int Graph::isRegular(){
@@ -203,7 +206,6 @@ bool Graph::isComplete(){
 
 void Graph::print(){
 	Vertex *itr = adjList;
-	
 	while(itr != NULL){
 		cout << itr->id << " ";
 		Edge *itr1 = itr->adjL;
@@ -216,12 +218,11 @@ void Graph::print(){
 		cout << endl;
 		itr = itr->next;
 	}
+	cout << endl;
 }
 
 Vertex::~Vertex(){
 	Vertex *current = next;
-	degree = -1;
-	id = -1;
 	
 	while(current != NULL){
 		Vertex *prox = current->next;
@@ -229,8 +230,6 @@ Vertex::~Vertex(){
 		delete current;
 		current = prox;
 	}	
-
-	next = NULL;
 }
 
 Edge::~Edge(){
@@ -240,15 +239,14 @@ Edge::~Edge(){
 		Edge *prox = current->next;
 		delete current;
 		current = prox;
-	}	
-
-	next = NULL; 
+	}
+	//cout << "deleted" << endl;
 }
 
 Graph::~Graph(){
 	nV = 0;
 	nE = 0;
 	delete adjList;
-	
+	adjList = NULL;
 	cout << "\nGraph deleted successfully!" << endl;
 }

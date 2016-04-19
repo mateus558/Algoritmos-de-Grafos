@@ -18,12 +18,14 @@ public:
 };
 
 class Edge{
+private:
 	int id;
 	Edge *next;
-
+public:
 	Edge(int v);
 	~Edge();
 	friend class Graph;
+	friend class Vertex;
 };
 
 class Graph{
@@ -32,6 +34,7 @@ private:
 	int nE;	//Número de arestas
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
 	Vertex *adjList;	//Lista de adjacências
+	void auxDeleteEdge(int u, int v);
 public:
 	Graph();	
 	Graph(int V, bool isOriented);
@@ -41,7 +44,7 @@ public:
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
 	int getOrder();
-	int getDegree(int v);
+	int getVertexDegree(int v);
 	int isRegular();
 	bool isComplete();
 	~Graph();
