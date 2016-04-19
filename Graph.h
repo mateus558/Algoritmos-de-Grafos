@@ -32,6 +32,7 @@ class Graph{
 private:
 	int nV;	//Número de Vértices
 	int nE;	//Número de arestas
+	int degree;
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
 	Vertex *adjList;	//Lista de adjacências
 	void auxDeleteEdge(int u, int v);
@@ -44,6 +45,8 @@ public:
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
 	int getOrder();
+	int getGraphDegree();
+	void geraCompleto();
 	int getVertexDegree(int v);
 	int isRegular();
 	bool isComplete();

@@ -23,6 +23,7 @@ Vertex::Vertex(int id){
 Graph::Graph(){
 	this->nV = 0;
 	this->nE = 0;
+	this->degree = -1;
 	isOriented = false;
 	adjList = new Vertex;
 }
@@ -31,6 +32,7 @@ Graph::Graph(int V, bool isOriented){
 	this->isOriented = isOriented;
 	this->nV = V;
 	this->nE = 0;
+	this->degree = -1;
 	adjList = new Vertex;
 	Vertex *itr = adjList;
 
@@ -42,6 +44,22 @@ Graph::Graph(int V, bool isOriented){
 	}
 	
 	itr = adjList;	
+}
+
+int Graph::getGraphDegree(){
+	Vertex *itr = adjList;
+	int maior = itr->degree;
+	
+	if(itr == NULL) return -1;
+	
+	while(itr != NULL){
+		if(itr->degree > maior)
+			maior = itr->degree;
+			
+		itr = itr->next;
+	}
+	
+	return maior;
 }
 
 int Graph::getOrder(){
@@ -168,6 +186,13 @@ void Graph::removeVertex(int v){
 			stck.push(itrE);
 			itrE = itrE->next;
 		}
+		
+		while(!stck.empty()){
+			Edge *temp1 = stck.top();
+			int id = temp1->id;	
+			this->deleteEdge(id, v);	
+			stck.pop();
+		}
 	}else{
 		itr = adjList;
 		while(itr != NULL){
@@ -183,14 +208,6 @@ void Graph::removeVertex(int v){
 	
 	}
 
-	if(!isOriented){
-		while(!stck.empty()){
-			Edge *temp1 = stck.top();
-			int id = temp1->id;	
-			this->deleteEdge(id, v);	
-			stck.pop();
-		}
-	}
 	Vertex *temp = var->next;
 	
 	prev->next = temp;
@@ -216,6 +233,19 @@ bool Graph::isComplete(){
 	}
 	
 	return (itr == NULL);
+}
+
+void Graph::geraCompleto(){
+	Vertex *itr = adjList;
+	
+	while(itr != NULL){
+		for(int i = 1; i <= nV; i++){
+			if(i != itr->id){
+				this->addEdge(itr->id, i);	
+			}
+		}
+		itr = itr->next;
+	}
 }
 
 void Graph::print(){
@@ -256,7 +286,6 @@ Edge::~Edge(){
 		current = prox;
 	}
 	next = NULL;
-	cout << "deleted" << endl;
 }
 
 Graph::~Graph(){
