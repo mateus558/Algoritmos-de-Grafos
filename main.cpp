@@ -17,6 +17,7 @@ int main(){
 	while(cin >> u >> v){
 		grafo->addEdge(u, v);
 	}
+	//cin >> u >> v;
 	
 	cout << "Add Vertex 6" << endl;
 	grafo->addVertex(6);

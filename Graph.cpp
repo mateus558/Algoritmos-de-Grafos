@@ -161,12 +161,26 @@ void Graph::removeVertex(int v){
 
 	Edge *itrE = itr->adjL;
 	stack<Edge*> stck;	
+	Vertex *var = itr;
 	
 	if(!isOriented){
 		while(itrE != NULL){
 			stck.push(itrE);
 			itrE = itrE->next;
 		}
+	}else{
+		itr = adjList;
+		while(itr != NULL){
+			Edge *adj = itr->adjL;
+			while(adj != NULL && adj->id != v){
+				adj = adj->next;
+			}	
+			if(adj != NULL){
+				this->deleteEdge(itr->id, adj->id);
+			}
+			itr = itr->next;
+		}
+	
 	}
 
 	if(!isOriented){
@@ -177,10 +191,10 @@ void Graph::removeVertex(int v){
 			stck.pop();
 		}
 	}
-	Vertex *temp = itr->next;
+	Vertex *temp = var->next;
 	
 	prev->next = temp;
-	itr = temp;
+	var = temp;
 }
 
 int Graph::isRegular(){
@@ -224,12 +238,13 @@ void Graph::print(){
 Vertex::~Vertex(){
 	Vertex *current = next;
 	
-	while(current != NULL){
+	while(current != 0){
 		Vertex *prox = current->next;
 		delete current->adjL;
 		delete current;
 		current = prox;
 	}	
+	next = 0;
 }
 
 Edge::~Edge(){
@@ -240,7 +255,8 @@ Edge::~Edge(){
 		delete current;
 		current = prox;
 	}
-	//cout << "deleted" << endl;
+	next = NULL;
+	cout << "deleted" << endl;
 }
 
 Graph::~Graph(){
