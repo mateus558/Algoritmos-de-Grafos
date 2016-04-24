@@ -43,7 +43,6 @@ Graph::Graph(int V, bool isOriented){
 		itr = itr->next;
 	}
 	
-	itr = adjList;	
 }
 
 int Graph::getGraphDegree(){
@@ -62,10 +61,26 @@ int Graph::getGraphDegree(){
 	return maior;
 }
 
+/*
+ ======================= getOrder() =======================
+
+ 	Retorna a ordem do grafo.
+ 	A ordem de um grafo  é o seu numero de vertices. 
+*/
 int Graph::getOrder(){
 	return nV;
 }
 
+/*
+ ======================= getVertexDegree(int v) =======================
+
+ 	Retorna o grau de um vertice v.
+	O grau de um vertice v e o numero de vertices adjacentes a v.
+	 	
+ 	Argumentos:
+ 	
+ 	int v -> Inteiro representando o id do vertice. 
+*/
 int Graph::getVertexDegree(int v){
 	Vertex *itr = adjList;
 	
@@ -76,6 +91,16 @@ int Graph::getVertexDegree(int v){
 	return (itr == NULL)?-1:itr->degree;
 }
 
+/*
+======================= addEdge(int u, int v) =======================
+
+	Adiciona uma aresta ou arco entre o vertice de origem u e o de chegada v.
+	
+	Argumentos:
+	
+	int u -> Inteiro representando o id do vertice de origem.
+	int v -> Inteiro representando o id do vertice de chegada.
+*/
 void Graph::addEdge(int u, int v){
 	Vertex *itr = adjList;
 
@@ -121,6 +146,14 @@ void Graph::addEdge(int u, int v){
 	}
 }
 
+/*
+======================= addVertex(int v) =======================	
+	Adiciona um vértice v ao grafo.
+	
+	Argumentos:
+	
+ 	int v -> Inteiro representando o id do vertice. 
+*/
 void Graph::addVertex(int v){
 	Vertex *itr = adjList;
 	Vertex *dad = itr;
@@ -135,7 +168,11 @@ void Graph::addVertex(int v){
 	new_vertex->next = itr;
 	dad->next = new_vertex;
 }
-//Por algum motivo está deletando o vértice errado, lembrar de acertar
+
+/*
+======================= auxDeleteEdge(int u, int v) =======================
+
+*/
 void Graph::auxDeleteEdge(int u, int v){
 	Vertex *itr = adjList;
 
@@ -160,6 +197,10 @@ void Graph::auxDeleteEdge(int u, int v){
 	}
 }
 
+/*
+======================= deleteEdge(int u, int v) =======================
+
+*/
 void Graph::deleteEdge(int u, int v){
 	this->auxDeleteEdge(u, v);
 	
@@ -167,7 +208,11 @@ void Graph::deleteEdge(int u, int v){
 		this->auxDeleteEdge(v, u);
 	}	
 }
-//Terminar depois
+
+/*
+======================= removeVertex(int v) =======================
+
+*/
 void Graph::removeVertex(int v){
 	Vertex *itr = adjList;
 	Vertex *prev = itr;
@@ -214,6 +259,10 @@ void Graph::removeVertex(int v){
 	var = temp;
 }
 
+/*
+======================= isRegular() =======================
+
+*/
 int Graph::isRegular(){
 	Vertex *itr = adjList;
 	int degree = adjList->degree;
@@ -225,6 +274,10 @@ int Graph::isRegular(){
 	return (itr == NULL)?degree:-1;
 }
 
+/*
+======================= isComplete() =======================
+
+*/
 bool Graph::isComplete(){
 	Vertex *itr = adjList;
 	
@@ -235,6 +288,10 @@ bool Graph::isComplete(){
 	return (itr == NULL);
 }
 
+/*
+======================= geraCompleto() =======================
+
+*/
 void Graph::geraCompleto(){
 	Vertex *itr = adjList;
 	
@@ -248,6 +305,10 @@ void Graph::geraCompleto(){
 	}
 }
 
+/*
+======================= print() =======================
+
+*/
 void Graph::print(){
 	Vertex *itr = adjList;
 	while(itr != NULL){
