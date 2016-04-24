@@ -45,7 +45,7 @@ public:
 	void addEdge(int u, int v);
 	void deleteEdge(int u, int v);
 	int getOrder();
-	int getGraphDegree();
+	int getMaxGraphDegree();
 	void geraCompleto();
 	int getVertexDegree(int v);
 	int isRegular();

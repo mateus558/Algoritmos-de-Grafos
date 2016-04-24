@@ -41,7 +41,7 @@ int main(){
 	grafo->addEdge(6,2);
 	grafo->print();
 	cout << "Vertex 6 degree: " << grafo->getVertexDegree(6) << endl; 
-	cout << "Graph degree: " << grafo->getGraphDegree() << endl;
+	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
 	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
 	
 	cout << "remove vertex 2" << endl;

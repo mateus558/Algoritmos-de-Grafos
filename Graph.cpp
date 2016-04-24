@@ -19,7 +19,11 @@ Vertex::Vertex(int id){
 	this->id = id;
 }
 
-//Por padrão o construtor cria um grafo vazio e nao-orientado
+/*
+======================= Graph() =======================
+	Construtor padrao do grafo, inicializa um grafo vazio.
+	
+*/
 Graph::Graph(){
 	this->nV = 0;
 	this->nE = 0;
@@ -28,6 +32,16 @@ Graph::Graph(){
 	adjList = new Vertex;
 }
 
+/*
+======================= Graph(int V, bool isOriented) =======================
+	Construtor sobrecarregado do grafo para quando se quiser inicializar o grafo 
+com uma quantidade inicial de vertices e definir se o grafo e orientado ou nao.
+
+	Argumentos:
+	
+	int V -> Tamanho inicial do conjunto de vertices V;
+	bool isOriented -> Booleano para definir se o grafo é orientado ou nao. 
+*/
 Graph::Graph(int V, bool isOriented){
 	this->isOriented = isOriented;
 	this->nV = V;
@@ -45,7 +59,15 @@ Graph::Graph(int V, bool isOriented){
 	
 }
 
-int Graph::getGraphDegree(){
+/*
+======================= getMaxGraphDegree() =======================
+	Retorna o grau do grafo.
+
+	O grau de um grafo G = (V,E), é o grau máximo do conjunto V de
+vértices pertencentes a G.
+
+*/
+int Graph::getMaxGraphDegree(){
 	Vertex *itr = adjList;
 	int maior = itr->degree;
 	
