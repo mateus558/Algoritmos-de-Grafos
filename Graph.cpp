@@ -15,6 +15,15 @@ Vertex::Vertex(){
 	this->adjL = NULL;
 }
 
+/*
+ ======================= Vertex(int id) =======================
+
+ 	Inicializa um vértice com um id.
+	 	
+ 	Parametros:
+ 	
+ 	int id -> Inteiro representando o id do vertice. 
+*/
 Vertex::Vertex(int id){
 	this->id = id;
 }
@@ -37,7 +46,7 @@ Graph::Graph(){
 	Construtor sobrecarregado do grafo para quando se quiser inicializar o grafo 
 com uma quantidade inicial de vertices e definir se o grafo e orientado ou nao.
 
-	Argumentos:
+	Parametros:
 	
 	int V -> Tamanho inicial do conjunto de vertices V;
 	bool isOriented -> Booleano para definir se o grafo é orientado ou nao. 
@@ -99,7 +108,7 @@ int Graph::getOrder(){
  	Retorna o grau de um vertice v.
 	O grau de um vertice v e o numero de vertices adjacentes a v.
 	 	
- 	Argumentos:
+ 	Parametros:
  	
  	int v -> Inteiro representando o id do vertice. 
 */
@@ -118,7 +127,7 @@ int Graph::getVertexDegree(int v){
 
 	Adiciona uma aresta ou arco entre o vertice de origem u e o de chegada v.
 	
-	Argumentos:
+	Parametros:
 	
 	int u -> Inteiro representando o id do vertice de origem.
 	int v -> Inteiro representando o id do vertice de chegada.
@@ -172,7 +181,7 @@ void Graph::addEdge(int u, int v){
 ======================= addVertex(int v) =======================	
 	Adiciona um vértice v ao grafo.
 	
-	Argumentos:
+	Parametros:
 	
  	int v -> Inteiro representando o id do vertice. 
 */
@@ -193,7 +202,12 @@ void Graph::addVertex(int v){
 
 /*
 ======================= auxDeleteEdge(int u, int v) =======================
-
+	Função auxiliar da deleteEdge.
+	
+	Parametros:
+	
+	int u -> Inteiro representando o id do vertice de origem.
+	int v -> Inteiro representando o id do vertice de chegada.
 */
 void Graph::auxDeleteEdge(int u, int v){
 	Vertex *itr = adjList;
@@ -221,7 +235,12 @@ void Graph::auxDeleteEdge(int u, int v){
 
 /*
 ======================= deleteEdge(int u, int v) =======================
-
+	Remove uma aresta ou arco entre o vertice de origem u e o de chegada v.
+	
+	Parametros:
+	
+	int u -> Inteiro representando o id do vertice de origem.
+	int v -> Inteiro representando o id do vertice de chegada.
 */
 void Graph::deleteEdge(int u, int v){
 	this->auxDeleteEdge(u, v);
@@ -233,7 +252,11 @@ void Graph::deleteEdge(int u, int v){
 
 /*
 ======================= removeVertex(int v) =======================
-
+	Remove um vertice e suas ligacoes do grafo.
+	
+	Parametros:
+	
+	int v -> id do vertice v.
 */
 void Graph::removeVertex(int v){
 	Vertex *itr = adjList;
@@ -283,7 +306,10 @@ void Graph::removeVertex(int v){
 
 /*
 ======================= isRegular() =======================
-
+	Verifica se o grafo é k-regular, caso seja, retorna 
+o valor de k.
+	Um grafo k-regular  é um grafo G = (V,E), tal que, para
+todo v pertencente a V, d(v) = k. 
 */
 int Graph::isRegular(){
 	Vertex *itr = adjList;
@@ -298,7 +324,10 @@ int Graph::isRegular(){
 
 /*
 ======================= isComplete() =======================
-
+	Verifica se o grafo é completo (Kq).
+	Um grafo G = (V,E) é dito completo se, para todo v pertencente
+a V, d(v) = nV - 1. Sendo nV o numero de vertices em G.
+	Kq  um grafo completo de ordem q.
 */
 bool Graph::isComplete(){
 	Vertex *itr = adjList;
@@ -312,7 +341,7 @@ bool Graph::isComplete(){
 
 /*
 ======================= geraCompleto() =======================
-
+	Funcao para gerar um grafo completo.
 */
 void Graph::geraCompleto(){
 	Vertex *itr = adjList;
@@ -329,7 +358,7 @@ void Graph::geraCompleto(){
 
 /*
 ======================= print() =======================
-
+	Funcao para imprimir a lista de adjacencias do grafo.
 */
 void Graph::print(){
 	Vertex *itr = adjList;
