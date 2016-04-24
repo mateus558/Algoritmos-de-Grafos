@@ -9,20 +9,20 @@ int main(){
 	char res;
 	cin >> res;
 	
-	Graph *grafo = new Graph(1000, (res == 'y'));
+	Graph *grafo = new Graph(5, (res == 'y'));
 	int u,v;	
 	string out = (res == 'y')?"yes":"no";
 	
 	cout << out << endl;
 	
-	/*while(cin >> u >> v){
+	while(cin >> u >> v){
 		grafo->addEdge(u, v);
-	}*/
-	clock_t begin = clock();
+	}
+	/*clock_t begin = clock();
 	grafo->geraCompleto();
  	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-	/*cout << "Add Vertex 6" << endl;
+ 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;*/
+	cout << "Add Vertex 6" << endl;
 	grafo->addVertex(6);
 	grafo->print();
 	cout << "Add Vertex 10" << endl;
@@ -42,6 +42,8 @@ int main(){
 	grafo->print();
 	cout << "Vertex 6 degree: " << grafo->getVertexDegree(6) << endl; 
 	cout << "Graph degree: " << grafo->getGraphDegree() << endl;
+	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
+	
 	cout << "remove vertex 2" << endl;
 	grafo->removeVertex(2);
 	grafo->print();
@@ -52,13 +54,16 @@ int main(){
 	grafo->removeVertex(6);
 	grafo->print();
 	cout << "Remove edge 3 to 4" << endl;
-	grafo->deleteEdge(3,4);*/
-	//grafo->print();
-		cout << elapsed_secs << endl;
+	grafo->deleteEdge(3,4);
+	grafo->print();
+	/*	cout << elapsed_secs << endl;
 		cout << "Graph degree: " << grafo->getGraphDegree() << endl;
 	if(grafo->isComplete()){
 		cout << "é completo" <<endl;
 	}else cout << "Não  completo" << endl;
+	if(grafo->isRegular()){
+		cout << "É " << grafo->isRegular() << " regular" << endl;
+	}*/
 	
 	delete grafo;
 }
