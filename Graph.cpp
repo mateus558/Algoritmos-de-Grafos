@@ -1,8 +1,4 @@
 #include "Graph.h"
-#include <stack>
-#include <iostream>
-
-using namespace std;
 
 Edge::Edge(Vertex *v, int weight){
 	this->dest = v;
@@ -16,7 +12,6 @@ Edge::Edge(Vertex *v){
 	this->id = v->id;
 	next = NULL;
 }
-
 
 Vertex::Vertex(){
 	this->next = NULL;
@@ -68,7 +63,7 @@ Graph::Graph(int V, bool isOriented){
 	adjList = new AdjacencyList;
 
 	for(int i = 0; i < V; i++){	
-		adjList->insert(i);
+		adjList->push_front(i);
 	}
 	
 	int mid = (adjList->head->id + adjList->tail->id)/2;
@@ -152,69 +147,16 @@ int Graph::getVertexDegree(int v){
 */
 
 void Graph::addEdge(int u, int v, int weight){
-	Vertex *itr;
-	Vertex *dest = NULL;
-	//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
-	if(u >= adjList->head->id && u < adjList->middle->id){
-		itr = adjList->head;
-	}else if(u >= adjList->middle->id && u < adjList->tail->id){
-		itr = adjList->middle;
-	}else itr = adjList->tail;	
-	//Procura o vertice de origem a partir do ponto selecionado anteriormente	
-	while(itr->id != u){
-		if(itr->id == v){
-			dest = itr;
-		}
-		itr = itr->next;
-	}	
+	Vertex *itr = NULL;
+	PairV dests = make_pair(itr, itr);
+	dests = adjList->addEdge(dests, u, v, weight, 0);
 
-	itr->degree++;
-
-	Vertex *find;
-	//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
-	if(v >= adjList->head->id && v < adjList->middle->id){
-		find = adjList->head;
-	}else if(v >= adjList->middle->id && v < adjList->tail->id){
-		find = adjList->middle;
-	}else find = adjList->tail;
-	//Procura o vertice de destino
-	while(find != NULL && find->id != v){
-		find = find->next;
-	}
-	dest = find;
-	//Adiciona aresta na lista de adjacencia do vertice de origem
-	Edge *eItr = itr->adjL;
-
-	if(itr->adjL != NULL){
-		Edge *new_edge = new Edge(dest, weight);
-		new_edge->next = eItr->next;
-		eItr->next = new_edge;
-	}else itr->adjL = new Edge(dest, weight);
-	
-	nE++;	
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
-		dest = itr;
-		itr = adjList->head;
-
-		while(itr->id != v){
-			itr = itr->next;
-		}
-		
-		itr->degree++;
-		
-		Edge *eItr = itr->adjL;
-
-		if(itr->adjL != NULL){
-			Edge *new_edge = new Edge(dest, weight);
-			new_edge->next = eItr->next;
-			eItr->next = new_edge;	
-		}else{
-			itr->adjL = new Edge(dest, weight);
-		}
-
-		nE++;
+		dests = adjList->addEdge(dests, v, u, weight, 1);
 	}
+	
+	nE++;
 }
 
 /*
@@ -227,12 +169,14 @@ void Graph::addEdge(int u, int v, int weight){
 */
 void Graph::addVertex(int v){
 	Vertex *itr;
+	
 	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
 	if(v >= adjList->head->id && v < adjList->middle->id){
 		itr = adjList->head;
 	}else if(v >= adjList->middle->id && v < adjList->tail->id){
 		itr = adjList->middle;
 	}else itr = adjList->tail;
+	
 	//Caso o vertice tenha id menor que o ultimo da lista inserir no final
 	if(itr != adjList->tail){
 		Vertex *dad = itr;
@@ -246,40 +190,9 @@ void Graph::addVertex(int v){
 
 		new_vertex->next = itr;
 		dad->next = new_vertex;
-	}else adjList->insert(v);
-}
-
-/*
-======================= auxDeleteEdge(int u, int v) =======================
-	Função auxiliar da deleteEdge.
+	}else adjList->push_front(v);
 	
-	Parametros:
-	
-	int u -> Inteiro representando o id do vertice de origem.
-	int v -> Inteiro representando o id do vertice de chegada.
-*/
-void Graph::auxDeleteEdge(int u, int v){
-	Vertex *itr = adjList->head;
-
-	while(itr != NULL && itr->id != u){
-		itr = itr->next;
-	}
-
-	Edge *adj = itr->adjL;	
-	Edge *prev = adj;
-
-	while(adj != NULL && adj->id != v){
-		prev = adj;
-		adj = adj->next;
-	}	
-	
-	if(adj == itr->adjL){
-		Edge *temp = adj->next;
-		itr->adjL = NULL;
-		itr->adjL = temp;
-	}else{
-		prev->next = adj->next;
-	}
+	nV++;
 }
 
 /*
@@ -292,11 +205,13 @@ void Graph::auxDeleteEdge(int u, int v){
 	int v -> Inteiro representando o id do vertice de chegada.
 */
 void Graph::deleteEdge(int u, int v){
-	this->auxDeleteEdge(u, v);
+	adjList->deleteEdge(u, v);
 	
 	if(!isOriented){
-		this->auxDeleteEdge(v, u);
+		adjList->deleteEdge(v, u);
 	}	
+	
+	nE--;
 }
 
 Edge* Graph::getAdjacents(int v){
@@ -362,6 +277,7 @@ void Graph::removeVertex(int v){
 	
 	prev->next = temp;
 	var = temp;
+	nV--;
 }
 
 /*

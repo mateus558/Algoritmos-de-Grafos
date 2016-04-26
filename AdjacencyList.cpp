@@ -1,0 +1,111 @@
+#include "Graph.h"
+
+
+using namespace std;
+
+AdjacencyList::AdjacencyList(){
+	head = NULL;
+	middle = NULL;
+	tail = NULL;
+}
+
+void AdjacencyList::push_front(int i){
+		Vertex *new_vertex = new Vertex(i);
+		
+		if(head == NULL){
+			new_vertex->prev = tail;
+			head = new_vertex;
+			tail = new_vertex;
+		}else{
+			new_vertex->prev = tail;
+			tail->next = new_vertex;
+			tail = new_vertex;
+		}
+}
+
+PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
+	Vertex *dest = NULL;
+	Vertex *itr = NULL;
+
+	if(!destins.second){		
+		//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
+		if(u >= head->id && u < middle->id){
+			itr = head;
+		}else if(u >= middle->id && u < tail->id){
+			itr = middle;
+		}else itr = tail;
+
+		//Procura o vertice de origem a partir do ponto selecionado anteriormente	
+		while(itr->id != u){
+			if(itr->id == v){
+				dest = itr;
+				destins.second = itr;
+			}
+			itr = itr->next;
+		}
+		destins.first = itr;
+	}else itr = destins.second;
+
+	itr->degree++;
+
+	Vertex *find;
+	
+	if(!it){
+		//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
+		if(v >= head->id && v < middle->id){
+			find = head;
+		}else if(v >= middle->id && v < tail->id){
+			find = middle;
+		}else find = tail;
+		//Procura o vertice de destino
+		while(find != NULL && find->id != v){
+			find = find->next;
+		}
+		dest = find;
+		destins.second = find;
+	}else dest = destins.first;
+	
+	Edge *eItr = itr->adjL;
+	
+	//Adiciona aresta na lista de adjacencia do vertice de origem
+	if(itr->adjL != NULL){
+		Edge *new_edge = new Edge(dest, weight);
+		new_edge->next = eItr->next;
+		eItr->next = new_edge;
+	}else itr->adjL = new Edge(dest, weight);
+	
+	return destins;
+}
+
+/*
+======================= auxDeleteEdge(int u, int v) =======================
+	Função auxiliar da deleteEdge.
+	
+	Parametros:
+	
+	int u -> Inteiro representando o id do vertice de origem.
+	int v -> Inteiro representando o id do vertice de chegada.
+*/
+void AdjacencyList::deleteEdge(int u, int v){
+	Vertex *itr = head;
+
+	while(itr != tail->next && itr->id != u){
+		itr = itr->next;
+	}
+
+	Edge *adj = itr->adjL;	
+	Edge *prev = adj;
+
+	while(adj != NULL && adj->id != v){
+		prev = adj;
+		adj = adj->next;
+	}	
+	
+	if(adj == itr->adjL){
+		Edge *temp = adj->next;
+		itr->adjL = NULL;
+		itr->adjL = temp;
+	}else{
+		prev->next = adj->next;
+	}
+}

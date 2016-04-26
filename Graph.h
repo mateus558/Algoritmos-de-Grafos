@@ -1,6 +1,9 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 #include <iostream>
+#include <ctime>
+#include <utility> 
+#include <stack>
 
 using namespace std;
 
@@ -29,31 +32,19 @@ struct Edge{
 	~Edge();
 };
 
-struct AdjacencyList{
+typedef pair<Vertex*, Vertex*> PairV;
+
+class AdjacencyList{
+private:
 	Vertex *head;
 	Vertex *middle;
 	Vertex *tail;
-	
-	AdjacencyList(){
-		head = NULL;
-		middle = NULL;
-		tail = NULL;
-	}
-	
-	void insert(int i){
-		Vertex *new_vertex = new Vertex(i);
-		
-		if(head == NULL){
-			new_vertex->prev = tail;
-			head = new_vertex;
-			tail = new_vertex;
-		}else{
-			new_vertex->prev = tail;
-			tail->next = new_vertex;
-			tail = new_vertex;
-		}
-	}
-	
+public:	
+	AdjacencyList();
+	void push_front(int i);
+	void deleteEdge(int u, int v);
+	PairV addEdge(PairV destins, int u, int v, int weight, int it);
+	friend class Graph;
 };
 
 class Graph{
@@ -74,7 +65,6 @@ public:
 	void deleteEdge(int u, int v);
 	int getOrder();
 	int size();
-	//Vertex* getDest(int v);
 	Edge* getAdjacents(int v);
 	int getMaxGraphDegree();
 	void geraCompleto();

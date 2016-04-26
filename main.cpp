@@ -1,5 +1,3 @@
-#include <iostream>
-#include <ctime>
 #include "Graph.h"
 
 using namespace std;
@@ -15,12 +13,6 @@ int main(){
 		grafo->addEdge(ini, fim, p);
 	}
 
-	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
-	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
-	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
-	if(grafo->isRegular()){
-		cout << "É " << grafo->isRegular() << " regular" << endl;
-	}
 	clock_t end = clock();
  	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;*/
 	
@@ -35,7 +27,7 @@ int main(){
 	cout << out << endl;
 	
 	while(cin >> u >> v){
-		grafo->addEdge(u, v);
+		grafo->addEdge(u, v, 0);
 	}*/
 	Graph *grafo = new Graph(1000,true);
 	clock_t begin = clock();
@@ -52,13 +44,13 @@ int main(){
 	grafo->addVertex(7);
 	grafo->print();
 	cout << "Add Edge 6 to 1" << endl;
-	grafo->addEdge(6,1);
+	grafo->addEdge(6,1,0);
 	grafo->print();
 	cout << "Add Edge 6 to 3" << endl;
-	grafo->addEdge(6,3);
+	grafo->addEdge(6,3,0);
 	grafo->print();
 	cout << "Add Edge 6 to 2" << endl;
-	grafo->addEdge(6,2);
+	grafo->addEdge(6,2,0);
 	grafo->print();
 	cout << "Vertex 6 degree: " << grafo->getVertexDegree(6) << endl; 
 	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
@@ -76,15 +68,18 @@ int main(){
 	cout << "Remove edge 3 to 4" << endl;
 	grafo->deleteEdge(3,4);
 	grafo->print();*/
-	/*	cout << elapsed_secs << endl;
-		cout << "Graph degree: " << grafo->getGraphDegree() << endl;
-	if(grafo->isComplete()){
+//	cout << elapsed_secs << endl;
+	//grafo->print();
+	/*if(grafo->isComplete()){
 		cout << "é completo" <<endl;
 	}else cout << "Não  completo" << endl;
-	if(grafo->isRegular()){
+	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
+	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
+	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
+	if(grafo->isRegular() != -1){
 		cout << "É " << grafo->isRegular() << " regular" << endl;
 	}*/
-	//grafo->print();
+
 	cout << elapsed_secs << endl;
 	//delete grafo;
 }
