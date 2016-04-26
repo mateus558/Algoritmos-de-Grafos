@@ -5,7 +5,7 @@
 using namespace std;
 
 int main(){
-	int n, ini, fim, p;
+	/*int n, ini, fim, p;
 	cin >> n;
 	clock_t begin = clock();
 	Graph *grafo = new Graph(n, true);
@@ -21,7 +21,7 @@ int main(){
 		cout << "É " << grafo->isRegular() << " regular" << endl;
 	}
 	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+ 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;*/
 	
 	/*cout << "Is the graph oriented? (y/n) ";
 	char res;
@@ -36,11 +36,11 @@ int main(){
 	while(cin >> u >> v){
 		grafo->addEdge(u, v);
 	}*/
-	/*Graph *grafo = new Graph(1000,true);
+	Graph *grafo = new Graph(10000,true);
 	clock_t begin = clock();
 	grafo->geraCompleto();
  	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;*/
+ 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	/*cout << "Add Vertex 6" << endl;
 	grafo->addVertex(6);
 	grafo->print();
@@ -83,7 +83,7 @@ int main(){
 	if(grafo->isRegular()){
 		cout << "É " << grafo->isRegular() << " regular" << endl;
 	}*/
-	grafo->print();
+	//grafo->print();
 	cout << elapsed_secs << endl;
 	delete grafo;
 }
