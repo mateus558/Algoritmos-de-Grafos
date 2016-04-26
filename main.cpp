@@ -14,6 +14,7 @@ int main(){
 	while(cin >> ini >> fim >> p){
 		grafo->addEdge(ini, fim, p);
 	}
+
 	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
 	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
 	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
@@ -36,7 +37,7 @@ int main(){
 	while(cin >> u >> v){
 		grafo->addEdge(u, v);
 	}*/
-	Graph *grafo = new Graph(10000,true);
+	Graph *grafo = new Graph(1000,true);
 	clock_t begin = clock();
 	grafo->geraCompleto();
  	clock_t end = clock();
@@ -85,5 +86,5 @@ int main(){
 	}*/
 	//grafo->print();
 	cout << elapsed_secs << endl;
-	delete grafo;
+	//delete grafo;
 }

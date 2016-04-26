@@ -47,7 +47,7 @@ Graph::Graph(){
 	this->nE = 0;
 	this->degree = -1;
 	isOriented = false;
-	adjList = new Vertex;
+	adjList->head = new Vertex;
 }
 
 /*
@@ -65,16 +65,21 @@ Graph::Graph(int V, bool isOriented){
 	this->nV = V;
 	this->nE = 0;
 	this->degree = -1;
-	adjList = new Vertex;
-	Vertex *itr = adjList;
+	adjList = new AdjacencyList;
 
-	for(int i = 0; i < V; i++){
-		itr->id = i;
-		if(i != V)
-			itr->next = new Vertex(i);
-		itr = itr->next;
+	for(int i = 0; i < V; i++){	
+		adjList->insert(i);
 	}
 	
+	int mid = (adjList->head->id + adjList->tail->id)/2;
+	
+	Vertex *middle = adjList->head;
+	
+	while(middle->id != mid){
+		middle = middle->next;
+	}	
+	
+	adjList->middle = middle;
 }
 
 int Graph::size(){
@@ -90,7 +95,7 @@ vértices pertencentes a G.
 
 */
 int Graph::getMaxGraphDegree(){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	int maior = itr->degree;
 	
 	if(itr == NULL) return -1;
@@ -126,7 +131,7 @@ int Graph::getOrder(){
  	int v -> Inteiro representando o id do vertice. 
 */
 int Graph::getVertexDegree(int v){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	
 	while(itr != NULL && itr->id != v){
 		itr = itr->next;
@@ -145,43 +150,53 @@ int Graph::getVertexDegree(int v){
 	int u -> Inteiro representando o id do vertice de origem.
 	int v -> Inteiro representando o id do vertice de chegada.
 */
+
 void Graph::addEdge(int u, int v, int weight){
-	Vertex *itr = adjList;
+	Vertex *itr;
 	Vertex *dest = NULL;
-	
+	//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
+	if(u >= adjList->head->id && u < adjList->middle->id){
+		itr = adjList->head;
+	}else if(u >= adjList->middle->id && u < adjList->tail->id){
+		itr = adjList->middle;
+	}else itr = adjList->tail;	
+	//Procura o vertice de origem a partir do ponto selecionado anteriormente	
 	while(itr->id != u){
 		if(itr->id == v){
 			dest = itr;
 		}
 		itr = itr->next;
-	}
-	
-	if(dest == NULL){
-		Vertex *find = itr;
+	}	
 
-		while(find != NULL && find->id != v){
-			find = find->next;
-		} 
-		
-		if(find != NULL) dest = find; else cout << "Vertice nao existe" << endl;
-	}
-	
 	itr->degree++;
-	
+
+	Vertex *find;
+	//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
+	if(v >= adjList->head->id && v < adjList->middle->id){
+		find = adjList->head;
+	}else if(v >= adjList->middle->id && v < adjList->tail->id){
+		find = adjList->middle;
+	}else find = adjList->tail;
+	//Procura o vertice de destino
+	while(find != NULL && find->id != v){
+		find = find->next;
+	}
+	dest = find;
+	//Adiciona aresta na lista de adjacencia do vertice de origem
 	Edge *eItr = itr->adjL;
-	
+
 	if(itr->adjL != NULL){
 		Edge *new_edge = new Edge(dest, weight);
 		new_edge->next = eItr->next;
 		eItr->next = new_edge;
 	}else itr->adjL = new Edge(dest, weight);
-
-	nE++;	
 	
+	nE++;	
+	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
 		dest = itr;
-		itr = adjList;
-	
+		itr = adjList->head;
+
 		while(itr->id != v){
 			itr = itr->next;
 		}
@@ -211,18 +226,27 @@ void Graph::addEdge(int u, int v, int weight){
  	int v -> Inteiro representando o id do vertice. 
 */
 void Graph::addVertex(int v){
-	Vertex *itr = adjList;
-	Vertex *dad = itr;
+	Vertex *itr;
+	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
+	if(v >= adjList->head->id && v < adjList->middle->id){
+		itr = adjList->head;
+	}else if(v >= adjList->middle->id && v < adjList->tail->id){
+		itr = adjList->middle;
+	}else itr = adjList->tail;
+	//Caso o vertice tenha id menor que o ultimo da lista inserir no final
+	if(itr != adjList->tail){
+		Vertex *dad = itr;
 	
-	while(itr != NULL && itr->id <= v){
-		dad = itr;
-		itr = itr->next;
-	}
+		while(itr != NULL && itr->id <= v){
+			dad = itr;
+			itr = itr->next;
+		}
 	
-	Vertex *new_vertex = new Vertex(v);
+		Vertex *new_vertex = new Vertex(v);
 
-	new_vertex->next = itr;
-	dad->next = new_vertex;
+		new_vertex->next = itr;
+		dad->next = new_vertex;
+	}else adjList->insert(v);
 }
 
 /*
@@ -235,7 +259,7 @@ void Graph::addVertex(int v){
 	int v -> Inteiro representando o id do vertice de chegada.
 */
 void Graph::auxDeleteEdge(int u, int v){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 
 	while(itr != NULL && itr->id != u){
 		itr = itr->next;
@@ -276,7 +300,7 @@ void Graph::deleteEdge(int u, int v){
 }
 
 Edge* Graph::getAdjacents(int v){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	
 	while(itr->id != v){
 		itr = itr->next;
@@ -295,7 +319,7 @@ Edge* Graph::getAdjacents(int v){
 */
 
 void Graph::removeVertex(int v){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	Vertex *prev = itr;
 	cout <<"removing "<< v <<endl;
 	while(itr != NULL && itr->id != v){
@@ -320,7 +344,7 @@ void Graph::removeVertex(int v){
 			stck.pop();
 		}
 	}else{
-		itr = adjList;
+		itr = adjList->head;
 		while(itr != NULL){
 			Edge *adj = itr->adjL;
 			while(adj != NULL && adj->id != v){
@@ -348,8 +372,8 @@ o valor de k.
 todo v pertencente a V, d(v) = k. 
 */
 int Graph::isRegular(){
-	Vertex *itr = adjList;
-	int degree = adjList->degree;
+	Vertex *itr = adjList->head;
+	int degree = adjList->head->degree;
 	
 	while(itr != NULL && itr->degree == degree){
 		itr = itr->next;
@@ -366,7 +390,7 @@ a V, d(v) = nV - 1. Sendo nV o numero de vertices em G.
 	Kq  um grafo completo de ordem q.
 */
 bool Graph::isComplete(){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	
 	while(itr != NULL && itr->degree == nV - 1){
 		itr = itr->next;
@@ -380,7 +404,7 @@ bool Graph::isComplete(){
 	Funcao para gerar um grafo completo.
 */
 void Graph::geraCompleto(){
-	Vertex *itr = adjList;
+	Vertex *itr = adjList->head;
 	
 	while(itr != NULL){
 		for(int i = 0; i < nV; i++){
@@ -397,8 +421,8 @@ void Graph::geraCompleto(){
 	Funcao para imprimir a lista de adjacencias do grafo.
 */
 void Graph::print(){
-	Vertex *itr = adjList;
-	while(itr->next != NULL){
+	Vertex *itr = adjList->head;
+	while(itr != adjList->tail->next){
 		cout << itr->id << ": ";
 		Edge *itr1 = itr->adjL;
 		
@@ -412,6 +436,8 @@ void Graph::print(){
 		itr = itr->next;
 	}
 	cout << endl;
+	
+	cout << adjList->head->id << " " << adjList->tail->id  << " " << adjList->middle->id<< endl; 
 }
 
 Vertex::~Vertex(){
@@ -440,7 +466,7 @@ Edge::~Edge(){
 Graph::~Graph(){
 	nV = 0;
 	nE = 0;
-	delete adjList;
-	adjList = NULL;
+	delete adjList->head;
+	adjList->head = NULL;
 	cout << "\nGraph deleted successfully!" << endl;
 }
