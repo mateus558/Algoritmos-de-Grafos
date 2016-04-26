@@ -162,7 +162,7 @@ void Graph::addEdge(int u, int v, int weight){
 		while(find != NULL && find->id != v){
 			find = find->next;
 		} 
-		cout << find->id << endl;
+		
 		if(find != NULL) dest = find; else cout << "Vertice nao existe" << endl;
 	}
 	
@@ -355,7 +355,7 @@ int Graph::isRegular(){
 		itr = itr->next;
 	}
 	
-	return (itr == NULL)?degree:0;
+	return (itr == NULL)?degree:-1;
 }
 
 /*
