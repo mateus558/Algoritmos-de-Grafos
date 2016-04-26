@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Edge;
+struct Edge;
 
 struct Vertex{
 	int id;

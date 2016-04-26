@@ -1,36 +1,5 @@
 #include "Graph.h"
 
-Edge::Edge(Vertex *v, int weight){
-	this->dest = v;
-	this->id = v->id;
-	this->weight = weight;
-	next = NULL;
-}
-
-Edge::Edge(Vertex *v){
-	this->dest = v;
-	this->id = v->id;
-	next = NULL;
-}
-
-Vertex::Vertex(){
-	this->next = NULL;
-	this->degree = 0;
-	this->adjL = NULL;
-}
-
-/*
- ======================= Vertex(int id) =======================
-
- 	Inicializa um vértice com um id.
-	 	
- 	Parametros:
- 	
- 	int id -> Inteiro representando o id do vertice. 
-*/
-Vertex::Vertex(int id){
-	this->id = id;
-}
 
 /*
 ======================= Graph() =======================
@@ -354,29 +323,6 @@ void Graph::print(){
 	cout << endl;
 	
 	cout << adjList->head->id << " " << adjList->tail->id  << " " << adjList->middle->id<< endl; 
-}
-
-Vertex::~Vertex(){
-	Vertex *current = next;
-	
-	while(current != 0){
-		Vertex *prox = current->next;
-		delete current->adjL;
-		delete current;
-		current = prox;
-	}	
-	next = 0;
-}
-
-Edge::~Edge(){
-	Edge *current = next;
-	
-	while(current != NULL){
-		Edge *prox = current->next;
-		delete current;
-		current = prox;
-	}
-	next = NULL;
 }
 
 Graph::~Graph(){
