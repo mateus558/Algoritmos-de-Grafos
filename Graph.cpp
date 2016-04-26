@@ -4,10 +4,19 @@
 
 using namespace std;
 
-Edge::Edge(int v){
-	this->id = v;
+Edge::Edge(Vertex *v, int weight){
+	this->dest = v;
+	this->id = v->id;
+	this->weight = weight;
 	next = NULL;
 }
+
+Edge::Edge(Vertex *v){
+	this->dest = v;
+	this->id = v->id;
+	next = NULL;
+}
+
 
 Vertex::Vertex(){
 	this->next = NULL;
@@ -59,13 +68,17 @@ Graph::Graph(int V, bool isOriented){
 	adjList = new Vertex;
 	Vertex *itr = adjList;
 
-	for(int i = 1; i <= V; i++){
+	for(int i = 0; i < V; i++){
 		itr->id = i;
 		if(i != V)
-			itr->next = new Vertex;
+			itr->next = new Vertex(i);
 		itr = itr->next;
 	}
 	
+}
+
+int Graph::size(){
+	return nE;
 }
 
 /*
@@ -132,29 +145,41 @@ int Graph::getVertexDegree(int v){
 	int u -> Inteiro representando o id do vertice de origem.
 	int v -> Inteiro representando o id do vertice de chegada.
 */
-void Graph::addEdge(int u, int v){
+void Graph::addEdge(int u, int v, int weight){
 	Vertex *itr = adjList;
-
+	Vertex *dest = NULL;
+	
 	while(itr->id != u){
+		if(itr->id == v){
+			dest = itr;
+		}
 		itr = itr->next;
 	}
+	
+	if(dest == NULL){
+		Vertex *find = itr;
+
+		while(find != NULL && find->id != v){
+			find = find->next;
+		} 
+		cout << find->id << endl;
+		if(find != NULL) dest = find; else cout << "Vertice nao existe" << endl;
+	}
+	
 	itr->degree++;
-
+	
 	Edge *eItr = itr->adjL;
-	Edge *dad = eItr;
+	
 	if(itr->adjL != NULL){
-		while(eItr != NULL && eItr->id <= v){
-			dad = eItr;
-			eItr = eItr->next;
-		}
+		Edge *new_edge = new Edge(dest, weight);
+		new_edge->next = eItr->next;
+		eItr->next = new_edge;
+	}else itr->adjL = new Edge(dest, weight);
 
-		Edge *new_edge = new Edge(v);
-		new_edge->next = eItr;
-		dad->next = new_edge;
-	}else itr->adjL = new Edge(v);
 	nE++;	
 	
 	if(!isOriented){
+		dest = itr;
 		itr = adjList;
 	
 		while(itr->id != v){
@@ -166,13 +191,13 @@ void Graph::addEdge(int u, int v){
 		Edge *eItr = itr->adjL;
 
 		if(itr->adjL != NULL){
-			while(eItr->next != NULL){
-				eItr = eItr->next;
-			}			
-			eItr->next = new Edge(u);	
+			Edge *new_edge = new Edge(dest, weight);
+			new_edge->next = eItr->next;
+			eItr->next = new_edge;	
 		}else{
-			itr->adjL = new Edge(u);
+			itr->adjL = new Edge(dest, weight);
 		}
+
 		nE++;
 	}
 }
@@ -250,6 +275,16 @@ void Graph::deleteEdge(int u, int v){
 	}	
 }
 
+Edge* Graph::getAdjacents(int v){
+	Vertex *itr = adjList;
+	
+	while(itr->id != v){
+		itr = itr->next;
+	}
+	
+	return itr->adjL;
+}
+
 /*
 ======================= removeVertex(int v) =======================
 	Remove um vertice e suas ligacoes do grafo.
@@ -258,6 +293,7 @@ void Graph::deleteEdge(int u, int v){
 	
 	int v -> id do vertice v.
 */
+
 void Graph::removeVertex(int v){
 	Vertex *itr = adjList;
 	Vertex *prev = itr;
@@ -319,7 +355,7 @@ int Graph::isRegular(){
 		itr = itr->next;
 	}
 	
-	return (itr == NULL)?degree:-1;
+	return (itr == NULL)?degree:0;
 }
 
 /*
@@ -347,9 +383,9 @@ void Graph::geraCompleto(){
 	Vertex *itr = adjList;
 	
 	while(itr != NULL){
-		for(int i = 1; i <= nV; i++){
+		for(int i = 0; i < nV; i++){
 			if(i != itr->id){
-				this->addEdge(itr->id, i);	
+				this->addEdge(itr->id, i, 0);	
 			}
 		}
 		itr = itr->next;
@@ -362,12 +398,13 @@ void Graph::geraCompleto(){
 */
 void Graph::print(){
 	Vertex *itr = adjList;
-	while(itr != NULL){
-		cout << itr->id << " ";
+	while(itr->next != NULL){
+		cout << itr->id << ": ";
 		Edge *itr1 = itr->adjL;
 		
 		while(itr1 != NULL){
-			cout << itr1->id << " ";
+			cout << "(" << itr1->id <<", " << itr1->weight << ")";
+			if(itr1->next != NULL) cout << "->"; else cout << ";";
 			itr1 = itr1->next;
 		}
 		

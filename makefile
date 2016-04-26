@@ -1,3 +1,3 @@
 all:
 	g++ -g main.cpp Graph.h Graph.cpp -o main
-	./main < input.txt
+	./main < grafo_125.txt
