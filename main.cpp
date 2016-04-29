@@ -1,128 +1,139 @@
 #include "Graph.h"
+#include <limits>
+
 
 using namespace std;
 
-void test1(int);
-void test2();
-void test3();
+bool sair = false;
 
-int main(){
-	test2();
+void clear(void);
+int showMenu(void);
+void executeOption(int);
+void waitUserAction(void);
+
+int main(int argc, char** argv){
+	if(argc == 3){
+		string input(argv[1]), output(argv[2]);
+		clear();
+		while(true){	
+			if(sair){
+				return 0;
+			}
+		
+			int option = showMenu();
+			
+			executeOption(option);
+			
+			clear();
+		}
+		
+	}else{
+		cerr << "Run the program in the following format:" << endl;
+		cerr << "./T1_201465559AC <input filename> <output filename>" << endl; 
+	}
 	
-	
-	//delete grafo;
+	return 0;
 }
 
-void test1(int n){
-	Graph *grafo = new Graph(n ,false);
-	clock_t begin = clock();
-	grafo->geraCompleto();
- 	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
- 	
- 	if(grafo->isComplete()){
-		cout << "é completo" <<endl;
-	}else cout << "Não  completo" << endl;
- 	
- 	cout << grafo->size() << endl;
-
-	cout << elapsed_secs << endl;
+void clear(void){
+	system("clear");
 }
 
-void test2(){
-	int n, ini, fim, p;
-	
-	cin >> n;
-	
-	clock_t begin = clock();
-	Graph *grafo = new Graph(n, true);
-	
-	cout << grafo->getOrder() << endl;
-	while(cin >> ini >> fim >> p){
-		grafo->addEdge(ini, fim, p);
-	}
-
-	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
- 	grafo->print();
- 	vector<Edge*> adj = grafo->getAdjacents(50);
- 	for(int i = 0; i < adj.size(); i++){
- 		cout << adj[i]->dest->id << " ";
- 	}	
- 	cout << endl;
- 	if(grafo->isComplete()){
-		cout << "é completo" <<endl;
-	}else cout << "Não  completo" << endl;
-	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
-	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
-	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
-	if(grafo->isRegular() != -1){
-		cout << "É " << grafo->isRegular() << " regular" << endl;
-	}
- 	
- 	cout << grafo->size() << endl;
-
-	cout << elapsed_secs << endl;
+void waitUserAction(void){
+	cout << "\nPressione ENTER para continuar..." << endl;
+	cin.ignore(numeric_limits<streamsize>::max(),'\n');
+	cin.get();
 }
 
-void test3(){
-	cout << "Is the graph oriented? (y/n) ";
-	char res;
-	cin >> res;
-	cout << res << endl;
-	Graph *grafo = new Graph(5, (res == 'y'));
-	int u,v;	
-	string out = (res == 'y')?"yes":"no";
+int showMenu(void){
+	int op;
 	
-	cout << out << endl;
+	cout << "\t\033[42;30m-----------------------------------------------------------------------\033[0m"<< endl;
+	cout << "\t\033[42;30m|                                UFJF                                 |\033[0m" <<endl;
+	cout << "\t\033[42;30m|                                                                     |\033[0m" << endl;
+	cout << "\t\033[42;30m|\t\tTrabalho de Teoria dos Grafos V1.0       	      \t|\033[0m" << endl;
+	cout << "\t\033[42;30m|                                                                     |\033[0m" << endl;	
+	cout << "\t\033[42;30m|                                                                     |\033[0m" << endl;
+	cout << "\t\033[42;30m|Por: Mateus C. Marim                                                 |\033[0m" << endl;
+	cout << "\t\033[42;30m|                                                                     |\033[0m" << endl;
+	cout << "\t\033[42;30m-----------------------------------------------------------------------\033[0m"<< endl;
+	cout << endl;
+	cout << endl;
+	cout << endl;
+	cout << "Escolha uma opcao:\n" << endl;
+	cout << "1 - Adicionar vertice" << endl;
+	cout << "2 - Adicionar aresta" << endl;
+	cout << "3 - Remover vertice" << endl;
+	cout << "4 - Remover aresta" << endl;
+	cout << "5 - Imprimir adjacentes ao vertice v" << endl;
+	cout << "6 - Ordem do grafo" << endl;
+	cout << "7 - Tamanho do grafo" << endl;
+	cout << "8 - Grau maximo do grafo" << endl;
+	cout << "9 - Grau do vertice v" << endl;
+	cout << "10 - Grafo eh completo?" << endl;
+	cout << "11 - Grafo eh regular?" << endl;
+	cout << "12 - Grafo eh bipartido?" << endl;
+	cout << "13 - Grafo eh conexo?" << endl;
+	cout << "14 - Vertice v eh adjacente a u?" << endl;
+	cout << "15 - Imprimir lista de adjacencias." << endl;
+	cout << "16 - Sair..." << endl;
+	cout << endl;
+	cout << "> ";
 	
-	while(cin >> u >> v){
-		grafo->addEdge(u, v, 0);
+	cin >> op;
+		
+	return op;
+}
+
+void executeOption(int op){
+	switch(op){
+	case 1:
+		
+		break;	
+	case 2:
+		
+		break;
+	case 3:
+		
+		break;
+	case 4:
+		
+		break;
+	case 5:
+		
+		break;
+	case 6:
+		
+		break;
+	case 7:
+		
+		break;
+	case 8:
+		
+		break;
+	case 9:
+		
+		break;
+	case 10:
+		
+		break;
+	case 11:
+		
+		break;
+	case 12:
+		
+		break;
+	case 13:
+		
+		break;
+	case 14:
+		
+		break;
+	case 15:
+		waitUserAction();
+		break;
+	case 16:
+		sair = true;
+		break;
 	}
-	
-	cout << "Add Vertex 6" << endl;
-	grafo->addVertex(6);
-	grafo->print();
-	cout << "Add Vertex 10" << endl;
-	grafo->addVertex(10);
-	grafo->print();
-	cout << "Add Vertex 7" << endl;
-	grafo->addVertex(7);
-	grafo->print();
-	cout << "Add Edge 6 to 1" << endl;
-	grafo->addEdge(6,1,0);
-	grafo->print();
-	cout << "Add Edge 6 to 3" << endl;
-	grafo->addEdge(6,3,0);
-	grafo->print();
-	cout << "Add Edge 6 to 2" << endl;
-	grafo->addEdge(6,2,0);
-	grafo->print();
-	cout << "Vertex 6 degree: " << grafo->getVertexDegree(6) << endl; 
-	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
-	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
-	
-	cout << "remove vertex 2" << endl;
-	grafo->removeVertex(2);
-	grafo->print();
-	cout << "Remove edge 6 to 1" << endl;
-	grafo->deleteEdge(6,1);
-	grafo->print();
-	cout << "Remove vertex 6" <<endl;
-	grafo->removeVertex(6);
-	grafo->print();
-	cout << "Remove edge 3 to 4" << endl;
-	grafo->deleteEdge(3,4);
-	grafo->print();
-	
-	if(grafo->isComplete()){
-		cout << "é completo" <<endl;
-	}else cout << "Não  completo" << endl;
-	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
-	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
-	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
-	if(grafo->isRegular() != -1){
-		cout << "É " << grafo->isRegular() << " regular" << endl;
-	}
-	
 }
