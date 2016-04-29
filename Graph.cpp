@@ -1,5 +1,7 @@
 #include "Graph.h"
 
+int Graph::removed;
+int Graph::ins;
 
 /*
 ======================= Graph() =======================
@@ -10,6 +12,7 @@ Graph::Graph(){
 	this->nV = 0;
 	this->nE = 0;
 	this->degree = -1;
+	removed = 0;
 	isOriented = false;
 	adjList->head = new Vertex;
 }
@@ -25,10 +28,12 @@ com uma quantidade inicial de vertices e definir se o grafo e orientado ou nao.
 	bool isOriented -> Booleano para definir se o grafo é orientado ou nao. 
 */
 Graph::Graph(int V, bool isOriented){
-	this->isOriented = isOriented;
-	this->nV = V;
-	this->nE = 0;
-	this->degree = -1;
+	isOriented = isOriented;
+	nV = V;
+	nE = 0;
+	degree = -1;
+	removed = 0;
+	ins = 0;
 	adjList = new AdjacencyList;
 
 	for(int i = 0; i < V; i++){	
@@ -39,7 +44,7 @@ Graph::Graph(int V, bool isOriented){
 	
 	Vertex *middle = adjList->head;
 	
-	while(middle->id != mid){
+	while(middle->id != mid-1){
 		middle = middle->next;
 	}	
 	
@@ -47,7 +52,7 @@ Graph::Graph(int V, bool isOriented){
 }
 
 int Graph::size(){
-	return nE;
+	return (isOriented)?nE:nE/2;
 }
 
 /*
@@ -72,6 +77,20 @@ int Graph::getMaxGraphDegree(){
 	}
 	
 	return maior;
+}
+
+Vertex* Graph::getBegin(int v){
+	Vertex *itr;
+	
+	if(adjList->head){
+		if(v >= adjList->head->id && v < adjList->middle->id){
+			itr = adjList->head;
+		}else if(v >= adjList->middle->id && v < adjList->tail->id){
+			itr = adjList->middle;
+		}else itr = adjList->tail;
+	}else itr = NULL;
+	
+	return itr;
 }
 
 /*
@@ -102,6 +121,33 @@ int Graph::getVertexDegree(int v){
 	}
 	
 	return (itr == NULL)?-1:itr->degree;
+}
+
+bool Graph::isAdjacent(int u, int v){
+	int dest;
+	int ori;
+	
+	if(!isOriented){
+		dest = (u < v)?u:v;
+	        ori = (dest == u)?v:u;
+	}else{
+		dest = u;
+		ori = v;
+	}	
+	
+	Vertex *itr = getBegin(u);
+	
+	while(itr->id != dest){
+		itr = itr->next;
+	}
+	
+	Edge *eItr = itr->adjL;
+	
+	while(eItr->id != ori){
+		eItr = eItr->next;	
+	}
+	
+	return (eItr->id == ori);
 }
 
 /*
@@ -137,14 +183,10 @@ void Graph::addEdge(int u, int v, int weight){
  	int v -> Inteiro representando o id do vertice. 
 */
 void Graph::addVertex(int v){
-	Vertex *itr;
+	Vertex *itr = getBegin(v);
 	
 	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
-	if(v >= adjList->head->id && v < adjList->middle->id){
-		itr = adjList->head;
-	}else if(v >= adjList->middle->id && v < adjList->tail->id){
-		itr = adjList->middle;
-	}else itr = adjList->tail;
+	
 	
 	//Caso o vertice tenha id menor que o ultimo da lista inserir no final
 	if(itr != adjList->tail){
@@ -160,6 +202,10 @@ void Graph::addVertex(int v){
 		new_vertex->next = itr;
 		dad->next = new_vertex;
 	}else adjList->push_front(v);
+	
+	//Avanca o ponteiro para o meio da lista de adjacencia
+	if(adjList->middle->next && ins%2 == 0) adjList->middle = adjList->middle->next; 
+	ins++;
 	
 	nV++;
 }
@@ -183,14 +229,22 @@ void Graph::deleteEdge(int u, int v){
 	nE--;
 }
 
-Edge* Graph::getAdjacents(int v){
+vector<Edge*> Graph::getAdjacents(int v){
 	Vertex *itr = adjList->head;
+	vector<Edge*> adja;
 	
 	while(itr->id != v){
 		itr = itr->next;
 	}
 	
-	return itr->adjL;
+	Edge *adj = itr->adjL;
+	
+	while(adj != NULL){
+		adja.push_back(adj);
+		adj = adj->next;
+	}
+	
+	return adja;
 }
 
 /*
@@ -203,7 +257,8 @@ Edge* Graph::getAdjacents(int v){
 */
 
 void Graph::removeVertex(int v){
-	Vertex *itr = adjList->head;
+	removed++;
+	Vertex *itr = getBegin(v);;
 	Vertex *prev = itr;
 	cout <<"removing "<< v <<endl;
 	while(itr != NULL && itr->id != v){
@@ -228,7 +283,7 @@ void Graph::removeVertex(int v){
 			stck.pop();
 		}
 	}else{
-		itr = adjList->head;
+		itr = getBegin(v);
 		while(itr != NULL){
 			Edge *adj = itr->adjL;
 			while(adj != NULL && adj->id != v){
@@ -243,9 +298,11 @@ void Graph::removeVertex(int v){
 	}
 
 	Vertex *temp = var->next;
-	
+	temp->prev = prev;
 	prev->next = temp;
 	var = temp;
+	if(adjList->middle->prev && removed%2 == 0) adjList->middle = adjList->middle->prev; 
+	
 	nV--;
 }
 

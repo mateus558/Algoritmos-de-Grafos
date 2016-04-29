@@ -4,6 +4,7 @@
 #include <ctime>
 #include <utility> 
 #include <stack>
+#include <vector>
 
 using namespace std;
 
@@ -52,6 +53,8 @@ private:
 	int nV;	//Cardinalidade do conjunto V de vertices
 	int nE;	//Cardinalidade do conjunto E de arestas ou arcos
 	int degree;	//Grau maximo do grafo
+	static int removed;
+	static int ins;
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
 	AdjacencyList *adjList;	//Lista de adjacências
 	void auxDeleteEdge(int u, int v);
@@ -59,19 +62,22 @@ public:
 	Graph();	
 	Graph(int V, bool isOriented);
 	void print();
+	bool isAdjacent(int u, int v);
 	void addVertex(int v);
 	void removeVertex(int v);
 	void addEdge(int u, int v, int weight);
 	void deleteEdge(int u, int v);
 	int getOrder();
 	int size();
-	Edge* getAdjacents(int v);
+	vector<Edge*> getAdjacents(int v);
 	int getMaxGraphDegree();
+	Vertex* getBegin(int v);
 	void geraCompleto();
 	int getVertexDegree(int v);
 	int isRegular();
 	bool isComplete();
 	~Graph();
+	friend class AdjacencyList;
 };
 
 #endif

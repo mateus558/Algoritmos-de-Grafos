@@ -2,9 +2,38 @@
 
 using namespace std;
 
+void test1(int);
+void test2();
+void test3();
+
 int main(){
-	/*int n, ini, fim, p;
+	test2();
+	
+	
+	//delete grafo;
+}
+
+void test1(int n){
+	Graph *grafo = new Graph(n ,false);
+	clock_t begin = clock();
+	grafo->geraCompleto();
+ 	clock_t end = clock();
+ 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+ 	
+ 	if(grafo->isComplete()){
+		cout << "é completo" <<endl;
+	}else cout << "Não  completo" << endl;
+ 	
+ 	cout << grafo->size() << endl;
+
+	cout << elapsed_secs << endl;
+}
+
+void test2(){
+	int n, ini, fim, p;
+	
 	cin >> n;
+	
 	clock_t begin = clock();
 	Graph *grafo = new Graph(n, true);
 	
@@ -14,12 +43,33 @@ int main(){
 	}
 
 	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;*/
-	
-	/*cout << "Is the graph oriented? (y/n) ";
+ 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+ 	grafo->print();
+ 	vector<Edge*> adj = grafo->getAdjacents(50);
+ 	for(int i = 0; i < adj.size(); i++){
+ 		cout << adj[i]->dest->id << " ";
+ 	}	
+ 	cout << endl;
+ 	if(grafo->isComplete()){
+		cout << "é completo" <<endl;
+	}else cout << "Não  completo" << endl;
+	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
+	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
+	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
+	if(grafo->isRegular() != -1){
+		cout << "É " << grafo->isRegular() << " regular" << endl;
+	}
+ 	
+ 	cout << grafo->size() << endl;
+
+	cout << elapsed_secs << endl;
+}
+
+void test3(){
+	cout << "Is the graph oriented? (y/n) ";
 	char res;
 	cin >> res;
-	
+	cout << res << endl;
 	Graph *grafo = new Graph(5, (res == 'y'));
 	int u,v;	
 	string out = (res == 'y')?"yes":"no";
@@ -28,13 +78,9 @@ int main(){
 	
 	while(cin >> u >> v){
 		grafo->addEdge(u, v, 0);
-	}*/
-	Graph *grafo = new Graph(1000,true);
-	clock_t begin = clock();
-	grafo->geraCompleto();
- 	clock_t end = clock();
- 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-	/*cout << "Add Vertex 6" << endl;
+	}
+	
+	cout << "Add Vertex 6" << endl;
 	grafo->addVertex(6);
 	grafo->print();
 	cout << "Add Vertex 10" << endl;
@@ -67,10 +113,9 @@ int main(){
 	grafo->print();
 	cout << "Remove edge 3 to 4" << endl;
 	grafo->deleteEdge(3,4);
-	grafo->print();*/
-//	cout << elapsed_secs << endl;
-	//grafo->print();
-	/*if(grafo->isComplete()){
+	grafo->print();
+	
+	if(grafo->isComplete()){
 		cout << "é completo" <<endl;
 	}else cout << "Não  completo" << endl;
 	cout << "Vertex 100 degree: " << grafo->getVertexDegree(100) << endl; 
@@ -78,8 +123,6 @@ int main(){
 	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
 	if(grafo->isRegular() != -1){
 		cout << "É " << grafo->isRegular() << " regular" << endl;
-	}*/
-
-	cout << elapsed_secs << endl;
-	//delete grafo;
+	}
+	
 }

@@ -12,11 +12,11 @@ AdjacencyList::AdjacencyList(){
 void AdjacencyList::push_front(int i){
 		Vertex *new_vertex = new Vertex(i);
 		
-		if(head == NULL){
+		if(head == NULL){	//Inicializa lista de adjacencias
 			new_vertex->prev = tail;
 			head = new_vertex;
 			tail = new_vertex;
-		}else{
+		}else{	//Adiciona vertice no final da lista ja inicializada
 			new_vertex->prev = tail;
 			tail->next = new_vertex;
 			tail = new_vertex;
@@ -48,15 +48,18 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 
 	itr->degree++;
 
-	Vertex *find;
-	
+	//Verifica se esta executando relacao simetrica da operacao para grafo nao orientado
 	if(!it){
+		Vertex *find;
+		
 		//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
 		if(v >= head->id && v < middle->id){
 			find = head;
-		}else if(v >= middle->id && v < tail->id){
+		}else if(v >= middle->id && v < tail->id){	
 			find = middle;
-		}else find = tail;
+		}else{
+			find = tail;
+		}
 		//Procura o vertice de destino
 		while(find != NULL && find->id != v){
 			find = find->next;
@@ -88,19 +91,22 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 */
 void AdjacencyList::deleteEdge(int u, int v){
 	Vertex *itr = head;
-
+	
+	//Procura o vertice de origem u
 	while(itr != tail->next && itr->id != u){
 		itr = itr->next;
 	}
 
 	Edge *adj = itr->adjL;	
 	Edge *prev = adj;
-
+	
+	//Procura aresta com o vertice de destino v na lista de adjacencias de u 
 	while(adj != NULL && adj->id != v){
 		prev = adj;
 		adj = adj->next;
 	}	
 	
+	//Verifica se a remocao vai ser feita no inicio ou no meio da lista de adjacencias
 	if(adj == itr->adjL){
 		Edge *temp = adj->next;
 		itr->adjL = NULL;
