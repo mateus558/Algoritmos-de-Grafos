@@ -5,6 +5,7 @@
 #include <utility> 
 #include <stack>
 #include <vector>
+#include <cstdint>
 
 using namespace std;
 
@@ -79,6 +80,8 @@ public:
 	void geraCompleto();
 	int getVertexDegree(int);
 	int isRegular();
+	bool isBipartite();
+	void isBipartiteUtil(int, bool*, int&, int8_t*, bool&);
 	bool isComplete();
 	~Graph();
 	friend class AdjacencyList;

@@ -19,7 +19,7 @@ int main(int argc, char** argv){
 		string fileName(argv[1]), output(argv[2]);
 		
 		Graph *grafo = populateWeightedGraph(fileName);
-		
+
 		clear();
 		while(true){	
 			if(sair){
@@ -208,7 +208,11 @@ void executeOption(int op, Graph *grafo){
 		break;
 		}
 	case 12:
+		if(grafo->isBipartite()){
+			cout << "\nO grafo eh bipartido." << endl;
+		}else cout << "\nO grafo nao eh bipartido." << endl;
 		
+		waitUserAction();
 		break;
 	case 13:
 		cout << (grafo->isConnected()?"\nEh conexo.":"\nNao eh conexo.") << endl;

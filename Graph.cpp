@@ -61,9 +61,7 @@ int Graph::size(){
 void Graph::DFS(){
 	//Marcar todos vertices como nao visitados
 	bool* isVisited = new bool[maxId];
-	for(int i = 0; i < nV; i++){
-		isVisited[i] = false;
-	}
+	for(int i = 0; i < maxId; isVisited[i++] = false);
 	
 	for(int i = 0; i <= maxId; i++){
 		if(!isVisited[i]){
@@ -87,7 +85,7 @@ void Graph::DFSUtil(int id, bool* isVisited){
 	isVisited[id] = true;
 	stack.push(v);
 	
-	cout << id << endl;
+	cout << id << " ";
 	while(!stack.empty()){
 		Vertex *u = stack.top();
 		stack.pop();
@@ -97,7 +95,7 @@ void Graph::DFSUtil(int id, bool* isVisited){
 			
 			if(!isVisited[uId]){
 				isVisited[uId] = true;
-				cout << uId << endl;
+				cout << uId <<" ";
 				stack.push(itr->dest);
 			}
 		} 
@@ -437,6 +435,60 @@ void Graph::geraCompleto(){
 		}
 		itr = itr->next;
 	}
+}
+
+void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool& isBi){
+	//Pilha para o DFS
+	stack<Vertex*> stack;
+	
+	//Marcar o primeiro vertice como visitado e colocar na pilha
+	Vertex* v = getBegin(id);
+	
+	while(v != NULL && v->id != id){
+		v = v->next;
+	}
+	
+	if(v == NULL) return;
+
+	isVisited[id] = true;
+	conj[id] = it%2;
+	it++;
+	stack.push(v);
+	
+	while(!stack.empty()){
+		Vertex *u = stack.top();
+		stack.pop();
+		
+		for(Edge *itr = u->adjL; itr != NULL; itr = itr->next){
+			if(!isVisited[itr->id]){
+				isVisited[itr->id] = true;
+				conj[itr->id] = it%2;
+				it++;
+				stack.push(itr->dest);
+			}else if(itr->id != id && conj[id] == conj[itr->id]){
+				isBi = false;
+				return;
+			}
+		}
+	}
+}
+
+bool Graph::isBipartite(){
+	bool* isVisited = new bool[maxId];
+	bool isBi = true;
+	int8_t* conj = new int8_t[maxId];
+	int i = 2;
+	
+	for(int i = 0; i < maxId; isVisited[i++] = false);
+	for(int i = 0; i < maxId; conj[i++] = 0);
+	
+	for(int v = 0; v < maxId; v++){
+		if(!isVisited[v]){
+			isBipartiteUtil(v, isVisited, i, conj, isBi);
+		}
+	}	
+	
+	return isBi;
 }
 
 /*
