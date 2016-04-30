@@ -42,7 +42,7 @@ private:
 	Vertex *tail;
 public:	
 	AdjacencyList();
-	void push_front(int i);
+	void push_back(int i);
 	void deleteEdge(int u, int v);
 	PairV addEdge(PairV destins, int u, int v, int weight, int it);
 	friend class Graph;
@@ -53,6 +53,7 @@ private:
 	int nV;	//Cardinalidade do conjunto V de vertices
 	int nE;	//Cardinalidade do conjunto E de arestas ou arcos
 	int degree;	//Grau maximo do grafo
+	int maxId;
 	static int removed;
 	static int ins;
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
@@ -62,18 +63,21 @@ public:
 	Graph();	
 	Graph(int V, bool isOriented);
 	void print();
-	bool isAdjacent(int u, int v);
-	void addVertex(int v);
-	void removeVertex(int v);
-	void addEdge(int u, int v, int weight);
-	void deleteEdge(int u, int v);
+	bool isAdjacent(int, int);
+	void addVertex(int);
+	void removeVertex(int);
+	void addEdge(int, int, int);
+	void deleteEdge(int, int);
 	int getOrder();
+	void DFS();
+	void DFSUtil(int, bool*);
+	bool isConnected();
 	int size();
-	vector<Edge*> getAdjacents(int v);
+	vector<Edge*> getAdjacents(int);
 	int getMaxGraphDegree();
-	Vertex* getBegin(int v);
+	Vertex* getBegin(int);
 	void geraCompleto();
-	int getVertexDegree(int v);
+	int getVertexDegree(int);
 	int isRegular();
 	bool isComplete();
 	~Graph();

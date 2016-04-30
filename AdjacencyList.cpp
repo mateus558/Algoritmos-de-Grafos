@@ -9,7 +9,7 @@ AdjacencyList::AdjacencyList(){
 	tail = NULL;
 }
 
-void AdjacencyList::push_front(int i){
+void AdjacencyList::push_back(int i){
 		Vertex *new_vertex = new Vertex(i);
 		
 		if(head == NULL){	//Inicializa lista de adjacencias

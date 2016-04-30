@@ -7,9 +7,13 @@ void test2();
 void test3();
 
 int main(){
-	test2();
+	Graph *grafo = new Graph(5, false);
 	
-	
+	grafo->addEdge(0,1, 0);
+	grafo->addEdge(1,2, 0);
+	grafo->addEdge(3,4, 0);
+		
+	if(grafo->isConnected()) cout << "is connected" << endl; else cout << "not connected" << endl;
 	//delete grafo;
 }
 
@@ -79,7 +83,6 @@ void test3(){
 	while(cin >> u >> v){
 		grafo->addEdge(u, v, 0);
 	}
-	
 	cout << "Add Vertex 6" << endl;
 	grafo->addVertex(6);
 	grafo->print();
@@ -101,7 +104,7 @@ void test3(){
 	cout << "Vertex 6 degree: " << grafo->getVertexDegree(6) << endl; 
 	cout << "Graph degree: " << grafo->getMaxGraphDegree() << endl;
 	cout << "Graph order: " << grafo->getOrder() << "\n" << endl;
-	
+	grafo->DFS();
 	cout << "remove vertex 2" << endl;
 	grafo->removeVertex(2);
 	grafo->print();

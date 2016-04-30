@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <algorithm>
 
 int Graph::removed;
 int Graph::ins;
@@ -13,6 +14,7 @@ Graph::Graph(){
 	this->nE = 0;
 	this->degree = -1;
 	removed = 0;
+	maxId = 0;
 	isOriented = false;
 	adjList->head = new Vertex;
 }
@@ -37,7 +39,7 @@ Graph::Graph(int V, bool isOriented){
 	adjList = new AdjacencyList;
 
 	for(int i = 0; i < V; i++){	
-		adjList->push_front(i);
+		adjList->push_back(i);
 	}
 	
 	int mid = (adjList->head->id + adjList->tail->id)/2;
@@ -48,11 +50,87 @@ Graph::Graph(int V, bool isOriented){
 		middle = middle->next;
 	}	
 	
+	maxId = V - 1;
 	adjList->middle = middle;
 }
 
 int Graph::size(){
 	return (isOriented)?nE:nE/2;
+}
+
+void Graph::DFS(){
+	//Marcar todos vertices como nao visitados
+	bool* isVisited = new bool[maxId];
+	for(int i = 0; i < nV; i++){
+		isVisited[i] = false;
+	}
+	
+	for(int i = 0; i <= maxId; i++){
+		if(!isVisited[i]){
+			DFSUtil(i, isVisited);
+		}
+	}
+}
+
+void Graph::DFSUtil(int id, bool* isVisited){
+	//Pilha para o DFS
+	stack<Vertex*> stack;
+	
+	//Marcar o primeiro vertice como visitado e colocar na pilha
+	Vertex* v = getBegin(id);
+	
+	while(v != NULL && v->id != id){
+		v = v->next;
+	}
+	if(v == NULL) return;
+	
+	isVisited[id] = true;
+	stack.push(v);
+	
+	cout << id << endl;
+	while(!stack.empty()){
+		Vertex *u = stack.top();
+		stack.pop();
+
+		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
+			int uId = itr->dest->id;
+			
+			if(!isVisited[uId]){
+				isVisited[uId] = true;
+				cout << uId << endl;
+				stack.push(itr->dest);
+			}
+		} 
+	}
+}
+
+bool Graph::isConnected(){
+	vector<bool> isVisited(maxId, false);
+	
+	stack<Vertex*> stack;	
+	Vertex* v = adjList->head;
+	int i = 1;
+	
+	isVisited[adjList->head->id] = true;
+	stack.push(v);
+	
+	while(!stack.empty()){
+		Vertex *u = stack.top();
+		Vertex *pred = u;
+		stack.pop();
+
+		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
+			int uId = itr->dest->id;
+			
+			if(!isVisited[uId] && itr->dest != pred){
+				isVisited[uId] = true;
+				i++;
+				stack.push(itr->dest);
+			}
+		} 
+	}
+
+	return (i == nV);
 }
 
 /*
@@ -87,7 +165,7 @@ Vertex* Graph::getBegin(int v){
 			itr = adjList->head;
 		}else if(v >= adjList->middle->id && v < adjList->tail->id){
 			itr = adjList->middle;
-		}else itr = adjList->tail;
+		}else if(v >= adjList->tail->id) itr = adjList->tail;
 	}else itr = NULL;
 	
 	return itr;
@@ -128,26 +206,26 @@ bool Graph::isAdjacent(int u, int v){
 	int ori;
 	
 	if(!isOriented){
-		dest = (u < v)?u:v;
+		dest = min(u,v);
 	        ori = (dest == u)?v:u;
 	}else{
 		dest = u;
 		ori = v;
 	}	
 	
-	Vertex *itr = getBegin(u);
-	
+	Vertex *itr = getBegin(dest);
+
 	while(itr->id != dest){
 		itr = itr->next;
 	}
-	
+
 	Edge *eItr = itr->adjL;
 	
-	while(eItr->id != ori){
+	while(eItr != NULL && eItr->id != ori){
 		eItr = eItr->next;	
 	}
-	
-	return (eItr->id == ori);
+
+	return (eItr != NULL && eItr->id == ori);
 }
 
 /*
@@ -183,10 +261,10 @@ void Graph::addEdge(int u, int v, int weight){
  	int v -> Inteiro representando o id do vertice. 
 */
 void Graph::addVertex(int v){
+	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
 	Vertex *itr = getBegin(v);
 	
-	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
-	
+	maxId = (v > maxId)?v:maxId;
 	
 	//Caso o vertice tenha id menor que o ultimo da lista inserir no final
 	if(itr != adjList->tail){
@@ -201,7 +279,7 @@ void Graph::addVertex(int v){
 
 		new_vertex->next = itr;
 		dad->next = new_vertex;
-	}else adjList->push_front(v);
+	}else adjList->push_back(v);
 	
 	//Avanca o ponteiro para o meio da lista de adjacencia
 	if(adjList->middle->next && ins%2 == 0) adjList->middle = adjList->middle->next; 
@@ -260,11 +338,14 @@ void Graph::removeVertex(int v){
 	removed++;
 	Vertex *itr = getBegin(v);;
 	Vertex *prev = itr;
+	
 	cout <<"removing "<< v <<endl;
 	while(itr != NULL && itr->id != v){
 		prev = itr;
 		itr = itr->next;
 	}
+
+	maxId = (v == maxId)?itr->prev->id:maxId;
 
 	Edge *itrE = itr->adjL;
 	stack<Edge*> stck;	
@@ -377,9 +458,7 @@ void Graph::print(){
 		cout << endl;
 		itr = itr->next;
 	}
-	cout << endl;
-	
-	cout << adjList->head->id << " " << adjList->tail->id  << " " << adjList->middle->id<< endl; 
+	cout << endl;	
 }
 
 Graph::~Graph(){
