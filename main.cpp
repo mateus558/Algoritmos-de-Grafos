@@ -160,7 +160,10 @@ void executeOption(int op, Graph *grafo, string output){
 		cin >> n;
 		
 		for(int i = 0; i < n; i++){ 
-			cin >> ini >> fim;
+			cout << "Id do vertice de origem " << i << ": ";
+			cin >> ini;
+			cout << "Id do vertice de chegada " << i << ": ";
+			cin >> fim;
 			grafo->addEdge(ini, fim, 0);
 			stream << "\nAresta " << ini << "->" << fim << " adicionada ao grafo.\n";
 		}
@@ -175,7 +178,8 @@ void executeOption(int op, Graph *grafo, string output){
 		cin >> n;
 		ostringstream stream;
 		
-		for(int i = 0; i < n; i++){ 
+		for(int i = 0; i < n; i++){
+			cout << "Id do vertice " << i << ": ";  
 			cin >> v;
 			grafo->removeVertex(v);
 			stream << v << " foi removido.\n\n";
@@ -264,9 +268,10 @@ void executeOption(int op, Graph *grafo, string output){
 		cout << "> ";
 		cin >> v;
 		stream << "O vertice " << v << " tem grau " << grafo->getVertexDegree(v) << "\n";
-		cout << stream.str();
+		string out(stream.str());
+		cout << out;
 		
-		saveToFile(output, stream.str());
+		saveToFile(output, out);
 		waitUserAction();
 		break;
 		}
@@ -353,7 +358,8 @@ void executeOption(int op, Graph *grafo, string output){
 		} 
 
 		Graph *grafo = Graph::inducedGraph(edges);
-		//grafo->print();
+		string out = grafo->print();
+		cout << out << endl;
 		waitUserAction();
 		break;
 		}

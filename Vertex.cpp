@@ -17,6 +17,9 @@ Vertex::Vertex(){
 */
 Vertex::Vertex(int id){
 	this->id = id;
+	this->next = NULL;
+	this->degree = 0;
+	this->adjL = NULL;
 }
 
 Vertex::~Vertex(){

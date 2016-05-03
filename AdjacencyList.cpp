@@ -22,6 +22,10 @@ void AdjacencyList::push_back(int i){
 		}
 }
 
+/*void AdjacencyList::insert(int v, Vertex* u){
+
+}*/
+
 void AdjacencyList::push_front(int i){
 		Vertex* new_vertex = new Vertex(i);
 		if(head == NULL){	//Inicializa lista de adjacencias
@@ -37,7 +41,6 @@ void AdjacencyList::push_front(int i){
 			tail->next = new_vertex;
 			head = new_vertex;
 		}
-				cout << "dsa" <<endl;
 }
 
 PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
@@ -45,14 +48,12 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	Vertex *itr = NULL;
 	
 	if(!destins.second){		
-		cout << "poop2" << endl;
 		//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
 		if(head){
 			if(v >= head->id){
 				itr = head;
 			}else if(v >= tail->id) itr = tail;
 		}else itr = NULL;
-		cout << "poop3" << endl;
 		//Procura o vertice de origem a partir do ponto selecionado anteriormente	
 		while(itr != tail->next && itr->id != u){
 			if(itr->id == v){
@@ -61,7 +62,6 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 			}
 			itr = itr->next;
 		}
-		cout << "poop4" << endl;
 		destins.first = itr;
 	}else itr = destins.second;
 		
@@ -94,7 +94,7 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 		new_edge->next = eItr->next;
 		eItr->next = new_edge;
 	}else itr->adjL = new Edge(dest, weight);
-	cout << "poop" << endl;
+
 	return destins;
 }
 

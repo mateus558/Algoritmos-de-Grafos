@@ -198,7 +198,7 @@ int Graph::getVertexDegree(int v){
 	while(itr != NULL && itr->id != v){
 		itr = itr->next;
 	}
-	
+	cout << itr->degree << endl;
 	return (itr == NULL)?-1:itr->degree;
 }
 
@@ -243,7 +243,6 @@ bool Graph::isAdjacent(int u, int v){
 void Graph::addEdge(int u, int v, int weight){
 	Vertex *itr = NULL;
 	PairV dests = make_pair(itr, itr);
-	cout << "poop1" << endl;
 	dests = adjList->addEdge(dests, u, v, weight, 0);
 	
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
@@ -258,7 +257,6 @@ void Graph::addEdge(int u, int v){
 	Vertex *itr = NULL;
 	PairV dests = make_pair(itr, itr);
 	dests = adjList->addEdge(dests, u, v, -1, 0);
-	cout << "cu" << endl;
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
 		dests = adjList->addEdge(dests, v, u, -1, 1);
@@ -276,7 +274,7 @@ bool Graph::exist(int v){
 		}
 	}else return false;
 	
-	return (itr != adjList->tail->next);	
+	return !(itr != adjList->tail->next);	
 }
 
 /*
@@ -288,7 +286,6 @@ bool Graph::exist(int v){
  	int v -> Inteiro representando o id do vertice. 
 */
 void Graph::addVertex(int v){
-	cout << v << " " << !exist(v) <<endl;
 	if(!exist(v)){
 		if(nV > 0){
 			//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
@@ -298,7 +295,6 @@ void Graph::addVertex(int v){
 			nV++;
 	
 			if(v >= adjList->head->id && v <= adjList->tail->id){
-				cout << "poop" << endl;
 				for(itr = getBegin(v); itr != adjList->tail->next && itr->id <= v; itr = itr->next);
 			
 			}else if(v >= adjList->tail->id){
@@ -310,15 +306,15 @@ void Graph::addVertex(int v){
 			}	
 	
 			if(itr->id >= v){
-				itr->prev->next = new_vertex;
 				new_vertex->prev = itr->prev;
+				new_vertex->prev->next = new_vertex;
 				new_vertex->next = itr;
 				itr->prev = new_vertex;
 			}
 		}else{
 			adjList->push_front(v);
 		}
-	}else 	cout << "poop1" << endl;
+	}
 
 }
 
