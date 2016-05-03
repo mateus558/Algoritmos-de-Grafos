@@ -5,7 +5,6 @@ using namespace std;
 
 AdjacencyList::AdjacencyList(){
 	head = NULL;
-	middle = NULL;
 	tail = NULL;
 }
 
@@ -23,29 +22,49 @@ void AdjacencyList::push_back(int i){
 		}
 }
 
+void AdjacencyList::push_front(int i){
+		Vertex* new_vertex = new Vertex(i);
+		if(head == NULL){	//Inicializa lista de adjacencias
+			new_vertex->prev = tail;
+			head = new_vertex;
+			tail = new_vertex;
+		}else{
+			Vertex* temp = head;
+			
+			new_vertex->next = temp;
+			temp->prev = new_vertex;
+			new_vertex->prev = tail;
+			tail->next = new_vertex;
+			head = new_vertex;
+		}
+				cout << "dsa" <<endl;
+}
+
 PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	Vertex *dest = NULL;
 	Vertex *itr = NULL;
-
+	
 	if(!destins.second){		
+		cout << "poop2" << endl;
 		//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
-		if(u >= head->id && u < middle->id){
-			itr = head;
-		}else if(u >= middle->id && u < tail->id){
-			itr = middle;
-		}else itr = tail;
-
+		if(head){
+			if(v >= head->id){
+				itr = head;
+			}else if(v >= tail->id) itr = tail;
+		}else itr = NULL;
+		cout << "poop3" << endl;
 		//Procura o vertice de origem a partir do ponto selecionado anteriormente	
-		while(itr->id != u){
+		while(itr != tail->next && itr->id != u){
 			if(itr->id == v){
 				dest = itr;
 				destins.second = itr;
 			}
 			itr = itr->next;
 		}
+		cout << "poop4" << endl;
 		destins.first = itr;
 	}else itr = destins.second;
-
+		
 	itr->degree++;
 
 	//Verifica se esta executando relacao simetrica da operacao para grafo nao orientado
@@ -53,13 +72,12 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 		Vertex *find;
 		
 		//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
-		if(v >= head->id && v < middle->id){
-			find = head;
-		}else if(v >= middle->id && v < tail->id){	
-			find = middle;
-		}else{
-			find = tail;
-		}
+		if(head){
+			if(v >= head->id){
+				find = head;
+			}else if(v >= tail->id) find = tail;
+		}else find = NULL;
+		
 		//Procura o vertice de destino
 		while(find != NULL && find->id != v){
 			find = find->next;
@@ -76,7 +94,7 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 		new_edge->next = eItr->next;
 		eItr->next = new_edge;
 	}else itr->adjL = new Edge(dest, weight);
-	
+	cout << "poop" << endl;
 	return destins;
 }
 

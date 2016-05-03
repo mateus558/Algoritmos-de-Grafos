@@ -10,13 +10,14 @@ int Graph::ins;
 	
 */
 Graph::Graph(){
-	this->nV = 0;
-	this->nE = 0;
-	this->degree = -1;
+	nV = 0;
+	nE = 0;
+	degree = -1;
 	removed = 0;
 	maxId = 0;
 	isOriented = false;
-	adjList->head = new Vertex;
+	adjList = new AdjacencyList;
+
 }
 
 /*
@@ -42,16 +43,20 @@ Graph::Graph(int V, bool isOriented){
 		adjList->push_back(i);
 	}
 	
-	int mid = (adjList->head->id + adjList->tail->id)/2;
-	
-	Vertex *middle = adjList->head;
-	
-	while(middle->id != mid-1){
-		middle = middle->next;
-	}	
-	
 	maxId = V - 1;
-	adjList->middle = middle;
+}
+
+bool Graph::ehOriented(vector<pair<int,int> > edges){
+	vector<pair<int,int> >::iterator itr, itr1;
+
+	for(itr = edges.begin(); itr != edges.end(); itr++){
+		for(itr1 = edges.begin(); itr1 != edges.end(); itr1++){
+			if(((*itr).first == (*itr1).second) && ((*itr).second == (*itr1).first)){
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 int Graph::size(){
@@ -159,10 +164,8 @@ Vertex* Graph::getBegin(int v){
 	Vertex *itr;
 	
 	if(adjList->head){
-		if(v >= adjList->head->id && v < adjList->middle->id){
+		if(v >= adjList->head->id){
 			itr = adjList->head;
-		}else if(v >= adjList->middle->id && v < adjList->tail->id){
-			itr = adjList->middle;
 		}else if(v >= adjList->tail->id) itr = adjList->tail;
 	}else itr = NULL;
 	
@@ -240,14 +243,40 @@ bool Graph::isAdjacent(int u, int v){
 void Graph::addEdge(int u, int v, int weight){
 	Vertex *itr = NULL;
 	PairV dests = make_pair(itr, itr);
+	cout << "poop1" << endl;
 	dests = adjList->addEdge(dests, u, v, weight, 0);
-
+	
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
 		dests = adjList->addEdge(dests, v, u, weight, 1);
 	}
 	
 	nE++;
+}
+
+void Graph::addEdge(int u, int v){
+	Vertex *itr = NULL;
+	PairV dests = make_pair(itr, itr);
+	dests = adjList->addEdge(dests, u, v, -1, 0);
+	cout << "cu" << endl;
+	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
+	if(!isOriented){
+		dests = adjList->addEdge(dests, v, u, -1, 1);
+	}
+	
+	nE++;
+}
+
+bool Graph::exist(int v){
+	Vertex *itr = adjList->head;
+	//cout << adjList->tail->next->id << endl;
+	if(itr != NULL){
+		while(itr != adjList->tail && itr->id != v){
+			itr = itr->next;
+		}
+	}else return false;
+	
+	return (itr != adjList->tail->next);	
 }
 
 /*
@@ -259,31 +288,38 @@ void Graph::addEdge(int u, int v, int weight){
  	int v -> Inteiro representando o id do vertice. 
 */
 void Graph::addVertex(int v){
-	//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
-	Vertex *itr = getBegin(v);
+	cout << v << " " << !exist(v) <<endl;
+	if(!exist(v)){
+		if(nV > 0){
+			//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
+			Vertex *itr;
+			Vertex *new_vertex = new Vertex(v);
+			maxId = (v > maxId)?v:maxId;
+			nV++;
 	
-	maxId = (v > maxId)?v:maxId;
+			if(v >= adjList->head->id && v <= adjList->tail->id){
+				cout << "poop" << endl;
+				for(itr = getBegin(v); itr != adjList->tail->next && itr->id <= v; itr = itr->next);
+			
+			}else if(v >= adjList->tail->id){
+				adjList->push_back(v);
+				return;
+			}else if(v < adjList->head->id){
+				adjList->push_front(v);
+				return;
+			}	
 	
-	//Caso o vertice tenha id menor que o ultimo da lista inserir no final
-	if(itr != adjList->tail){
-		Vertex *dad = itr;
-	
-		while(itr != NULL && itr->id <= v){
-			dad = itr;
-			itr = itr->next;
+			if(itr->id >= v){
+				itr->prev->next = new_vertex;
+				new_vertex->prev = itr->prev;
+				new_vertex->next = itr;
+				itr->prev = new_vertex;
+			}
+		}else{
+			adjList->push_front(v);
 		}
-	
-		Vertex *new_vertex = new Vertex(v);
+	}else 	cout << "poop1" << endl;
 
-		new_vertex->next = itr;
-		dad->next = new_vertex;
-	}else adjList->push_back(v);
-	
-	//Avanca o ponteiro para o meio da lista de adjacencia
-	if(adjList->middle->next && ins%2 == 0) adjList->middle = adjList->middle->next; 
-	ins++;
-	
-	nV++;
 }
 
 /*
@@ -338,7 +374,7 @@ void Graph::removeVertex(int v){
 	Vertex *prev = itr;
 	
 	cout <<"removing "<< v <<endl;
-	while(itr != NULL && itr->id != v){
+	while(itr != adjList->tail->next && itr->id != v){
 		prev = itr;
 		itr = itr->next;
 	}
@@ -380,7 +416,6 @@ void Graph::removeVertex(int v){
 	temp->prev = prev;
 	prev->next = temp;
 	var = temp;
-	if(adjList->middle->prev && removed%2 == 0) adjList->middle = adjList->middle->prev; 
 	
 	nV--;
 }
@@ -491,26 +526,45 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
+Graph* Graph::inducedGraph(vector<pair<int, int> > edges){
+	vector<pair<int, int> >::iterator itr;
+	Graph* grafo = new Graph;
+			
+	for(itr = edges.begin(); itr != edges.end(); itr++){
+		grafo->addVertex((*itr).first);
+		grafo->addVertex((*itr).second);
+									cout << "dsk" <<endl;
+		grafo->addEdge((*itr).first, (*itr).second);
+	}
+	
+	return grafo;
+}
+
 /*
 ======================= print() =======================
 	Funcao para imprimir a lista de adjacencias do grafo.
 */
-void Graph::print(){
+string Graph::print(){
+	string printed;
+	ostringstream stream;
 	Vertex *itr = adjList->head;
+	stream << '\n';
 	while(itr != adjList->tail->next){
-		cout << itr->id << ": ";
+		stream << itr->id << ": ";
 		Edge *itr1 = itr->adjL;
 		
 		while(itr1 != NULL){
-			cout << "(" << itr1->id <<", " << itr1->weight << ")";
-			if(itr1->next != NULL) cout << "->"; else cout << ";";
+			stream << "(" << itr1->id <<", " << itr1->weight << ")";
+			if(itr1->next != NULL) stream << "->"; else stream << ";";
 			itr1 = itr1->next;
 		}
 		
-		cout << endl;
+		stream << '\n';
 		itr = itr->next;
 	}
-	cout << endl;	
+	stream << '\n';
+	
+	return stream.str();	
 }
 
 Graph::~Graph(){

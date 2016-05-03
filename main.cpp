@@ -2,17 +2,16 @@
 #include <limits>
 #include <fstream>
 
-
 using namespace std;
 
 bool sair = false;
 
 void clear(void);
 int showMenu(void);
-void executeOption(int, Graph*);
+void executeOption(int, Graph*, string);
 void waitUserAction(void);
+void saveToFile(string, string);
 Graph* populateWeightedGraph(string);
-bool isOriented(vector<pair<int,int> >);
 
 int main(int argc, char** argv){
 	if(argc == 3){
@@ -28,7 +27,7 @@ int main(int argc, char** argv){
 		
 			int option = showMenu();
 			
-			executeOption(option, grafo);
+			executeOption(option, grafo, output);
 			
 			clear();
 		}
@@ -39,19 +38,6 @@ int main(int argc, char** argv){
 	}
 	
 	return 0;
-}
-
-bool isOriented(vector<pair<int,int> > edges){
-	vector<pair<int,int> >::iterator itr, itr1;
-
-	for(itr = edges.begin(); itr != edges.end(); itr++){
-		for(itr1 = edges.begin(); itr1 != edges.end(); itr1++){
-			if(((*itr).first == (*itr1).second) && ((*itr).second == (*itr1).first)){
-				return false;
-			}
-		}
-	}
-	return true;
 }
 
 Graph* populateWeightedGraph(string fileName){
@@ -72,7 +58,7 @@ Graph* populateWeightedGraph(string fileName){
 		weights.push_back(weight);
 	}
 
-	Graph *grafo = new Graph(nV, isOriented(edges));
+	Graph *grafo = new Graph(nV, Graph::ehOriented(edges));
 
 	for(int i = 0; i < edges.size(); i++){
 		grafo->addEdge(edges[i].first, edges[i].second, weights[i]);
@@ -122,7 +108,8 @@ int showMenu(void){
 	cout << "13 - Grafo eh conexo?" << endl;
 	cout << "14 - Vertice v eh adjacente a u?" << endl;
 	cout << "15 - Imprimir lista de adjacencias." << endl;
-	cout << "16 - Sair..." << endl;
+	cout << "16 - Criar grafo induzido." << endl;
+	cout << "17 - Sair..." << endl;
 	cout << endl;
 	cout << "> ";
 	
@@ -131,20 +118,43 @@ int showMenu(void){
 	return op;
 }
 
-void executeOption(int op, Graph *grafo){
+void saveToFile(string fileName, string output){
+	char res;
+	cout << "\nDeseja salvar a saida?(y/n)" << endl;
+	cin >> res;
+	if(res == 'y'){
+		ofstream out(fileName, ios::app);
+	
+		if(!out){
+			cout << "Arquivo de saida nao pode ser aberto." << endl;
+		}	
+	
+		out << output;
+	
+		out.close();
+	}
+}
+
+void executeOption(int op, Graph *grafo, string output){
 	switch(op){
 	case 1:{
 		int v;
+		ostringstream stream;
 		
 		cout << "\nId do vertice que deseja adicionar: ";
 		cin >> v;
 		
 		grafo->addVertex(v);
+		stream << "\nVertice " << v << " adicionado.\n"; 
+		
+		saveToFile(output, stream.str());
 		waitUserAction();
 		break;	
 		}
-	case 2:
+	case 2:{
 		int n, ini, fim;
+		ostringstream stream;
+		
 		cout << "\nQuantas arestas deseja adicionar? " << endl;
 		cout << "> ";
 		cin >> n;
@@ -152,16 +162,46 @@ void executeOption(int op, Graph *grafo){
 		for(int i = 0; i < n; i++){ 
 			cin >> ini >> fim;
 			grafo->addEdge(ini, fim, 0);
+			stream << "\nAresta " << ini << "->" << fim << " adicionada ao grafo.\n";
 		}
-		
+		saveToFile(output, stream.str());
 		waitUserAction();
 		break;
-	case 3:
+		}
+	case 3:{
+		int n, v;
+		cout << "\nQuantos vertices deseja remover? " << endl;
+		cout << "> ";
+		cin >> n;
+		ostringstream stream;
 		
-		break;
-	case 4:
+		for(int i = 0; i < n; i++){ 
+			cin >> v;
+			grafo->removeVertex(v);
+			stream << v << " foi removido.\n\n";
+		}
 		
+		saveToFile(output, stream.str());
+		waitUserAction();
 		break;
+		}
+	case 4:{
+		int v, u;
+		ostringstream stream;
+		
+		cout << "\nQual aresta deseja remover?"<< endl;
+		cout << "Id do vertice de origem: ";
+		cin >> v;
+		cout << "Id do vertice de chegada: ";
+		cin >> u;
+		
+		grafo->deleteEdge(v, u);
+		stream << "\nAresta " << v << "->" << u << " removida.\n"; 
+		
+		saveToFile(output, stream.str());
+		waitUserAction();
+		break;
+		}
 	case 5:{
 		int v;
 		cout << "\nDeseja imprimir os adjacentes de que vertice?" << endl;
@@ -179,46 +219,99 @@ void executeOption(int op, Graph *grafo){
 		waitUserAction();
 		break;
 		}
-	case 6:
-		cout << "\n" << grafo->getOrder() << endl; 
-		waitUserAction();
-		break;
-	case 7:
-		cout << "\n" << grafo->size() << endl; 
-		waitUserAction();
-		break;
-	case 8:
+	case 6:{
+		int o = grafo->getOrder();
+		stringstream ss;
+		ss << o;
+		string str = ss.str();
 		
-		break;
-	case 9:
-		
-		break;
-	case 10:
-		if(grafo->isComplete()) cout << "\nO grafo eh completo." << endl; else cout << "\nO grafo nao eh completo." << endl;
-		waitUserAction();
-		break;
-	case 11:{
-		int k = grafo->isRegular();
-	
-		if(k >= 0){
-			cout << "\nO grafo eh " << k << " regular." << endl;
-		}else cout << "\nO grafo nao eh regular." << endl;
-		
+		cout << "\n" << str << endl; 
+			
+		str = str + '\n';
+		saveToFile(output, str);
 		waitUserAction();
 		break;
 		}
-	case 12:
-		if(grafo->isBipartite()){
-			cout << "\nO grafo eh bipartido." << endl;
-		}else cout << "\nO grafo nao eh bipartido." << endl;
+	case 7:{
+		int o = grafo->size();
+		stringstream ss;
+		ss << o;
+		string str = ss.str();
 		
+		cout << "\n" << str << endl; 
+			
+		str = str + '\n';
+		saveToFile(output, str);
 		waitUserAction();
 		break;
-	case 13:
-		cout << (grafo->isConnected()?"\nEh conexo.":"\nNao eh conexo.") << endl;
+		}
+	case 8:{
+		ostringstream stream;
+		
+		cout << endl;
+		stream << grafo->getMaxGraphDegree() << '\n';
+		cout << stream.str();
+		
+		saveToFile(output, stream.str());
 		waitUserAction();
 		break;
-	case 14:
+		}
+	case 9:{
+		int v;
+		ostringstream stream;
+		
+		cout << "\nDeseja saber o grau de qual vertice? " << endl;
+		cout << "> ";
+		cin >> v;
+		stream << "O vertice " << v << " tem grau " << grafo->getVertexDegree(v) << "\n";
+		cout << stream.str();
+		
+		saveToFile(output, stream.str());
+		waitUserAction();
+		break;
+		}
+	case 10:{
+		string outp = (grafo->isComplete())?"\nO grafo eh completo.\n":"\nO grafo nao eh completo.\n";
+		
+		cout << outp;
+		
+		saveToFile(output, outp);
+		waitUserAction();
+		break;
+		}
+	case 11:{
+		int k = grafo->isRegular();
+		stringstream ss;
+		ss << k;
+		string str = ss.str();
+		
+		string outp = (k >= 0)?"\nO grafo eh " + str + " regular.\n":"\nO grafo nao eh regular.\n";
+		
+		cout << outp << endl;
+		
+		saveToFile(output, outp);		
+		waitUserAction();
+		break;
+		}
+	case 12:{
+		string outp = (grafo->isBipartite())?"\nO grafo eh bipartido.\n":"\nO grafo nao eh bipartido.\n";
+		
+		cout << outp;
+		
+		saveToFile(output, outp);		
+		waitUserAction();
+		break;
+		}
+	case 13:{
+		string outp = (grafo->isConnected())?"\nEh conexo.\n":"\nNao eh conexo.\n";
+
+		cout << outp;
+	
+		saveToFile(output, outp);				
+		waitUserAction();
+		break;
+		}
+	case 14:{
 		int u, v;
 		
 		cout << "\nVertice u: ";
@@ -227,17 +320,44 @@ void executeOption(int op, Graph *grafo){
 		cin >> v;
 		
 		cout << endl;
-		if(grafo->isAdjacent(u,v)){
-			cout << u << " eh adjacente a " << v << "." << endl;
-		}else cout << u << " nao eh adjacente a " << v << "." << endl;
 		
+		stringstream ss;
+		ss << u;
+		string str = ss.str();
+		stringstream ss1;
+		ss1 << v;
+		string str1 = ss1.str();
+		
+		string out = (grafo->isAdjacent(u,v))?str + " eh adjacente a " + str1 + ".\n":str + " nao eh adjacente a " + str1 + ".\n";
+		cout << out; 
+		
+		saveToFile(output, out);				
 		waitUserAction();
 		break;
-	case 15:
-		grafo->print();
+		}
+	case 15:{
+		string out = grafo->print();
+		cout << out << endl;
+		saveToFile(output, out);				
 		waitUserAction();
 		break;
-	case 16:
+		}
+	case 16:{
+		int n, ini, fim;
+		vector<pair<int, int> > edges;
+		cout << "\nInforme a quantidade de arestas: ";
+		cin >> n;
+		for(int i = 0; i < n; i++){
+			cin >> ini >> fim;
+			edges.push_back(make_pair(ini, fim));
+		} 
+
+		Graph *grafo = Graph::inducedGraph(edges);
+		//grafo->print();
+		waitUserAction();
+		break;
+		}
+	case 17:
 		sair = true;
 		break;
 	}

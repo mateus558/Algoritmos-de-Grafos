@@ -5,6 +5,7 @@
 #include <utility> 
 #include <stack>
 #include <vector>
+#include <sstream>
 #include <cstdint>
 
 using namespace std;
@@ -39,10 +40,10 @@ typedef pair<Vertex*, Vertex*> PairV;
 class AdjacencyList{
 private:
 	Vertex *head;
-	Vertex *middle;
 	Vertex *tail;
 public:	
 	AdjacencyList();
+	void push_front(int i);
 	void push_back(int i);
 	void deleteEdge(int u, int v);
 	PairV addEdge(PairV destins, int u, int v, int weight, int it);
@@ -63,16 +64,20 @@ private:
 public:
 	Graph();	
 	Graph(int V, bool isOriented);
-	void print();
+	string print();
+	static bool ehOriented(vector<pair<int,int> >);
 	bool isAdjacent(int, int);
 	void addVertex(int);
 	void removeVertex(int);
 	void addEdge(int, int, int);
+	void addEdge(int, int);
 	void deleteEdge(int, int);
 	int getOrder();
 	void DFS();
+	bool exist(int v);
 	void DFSUtil(int, bool*);
 	bool isConnected();
+	static Graph* inducedGraph(vector<pair<int, int> >);
 	int size();
 	vector<Edge*> getAdjacents(int);
 	int getMaxGraphDegree();
