@@ -46,6 +46,14 @@ Graph::Graph(int V, bool isOriented){
 	maxId = V - 1;
 }
 
+/*
+======================= ehOriented() =======================
+	Diz se o grafo eh orientado.
+	
+	Parametros:
+	
+	vector<pair<int,int> > edges -> conjunto de arestas.
+*/
 bool Graph::ehOriented(vector<pair<int,int> > edges){
 	vector<pair<int,int> >::iterator itr, itr1;
 
@@ -59,6 +67,11 @@ bool Graph::ehOriented(vector<pair<int,int> > edges){
 	return true;
 }
 
+/*
+======================= size() =======================
+	Retorna o tamanho do grafo (cardinalidade do conjunto de arestas).
+	
+*/
 int Graph::size(){
 	return (isOriented)?nE:nE/2;
 }
@@ -107,6 +120,12 @@ void Graph::DFSUtil(int id, bool* isVisited){
 	}
 }
 
+/*
+======================= isConnected() =======================
+	Diz se o grafo eh conexo.
+	Um grafo eh conexo se existe um caminho para todos vertices a partir de qualquer origem.
+
+*/
 bool Graph::isConnected(){
 	vector<bool> isVisited(maxId, false);
 	
@@ -202,6 +221,16 @@ int Graph::getVertexDegree(int v){
 	return (itr == NULL)?-1:itr->degree;
 }
 
+/*
+ ======================= getVertexDegree(int v) =======================
+
+ 	Verifica se dois vertices sao adjacentes.
+ 
+ 	Parametros:
+	
+ 	int u -> vertice de origem.
+	int v -> vertice de destino.
+*/
 bool Graph::isAdjacent(int u, int v){
 	int dest;
 	int ori;
@@ -265,9 +294,17 @@ void Graph::addEdge(int u, int v){
 	nE++;
 }
 
+/*
+======================= exist(int v) =======================	
+	Verifica se um vertice v existe no grafo.	
+	
+	Parametros:
+	
+ 	int v -> Inteiro representando o id do vertice. 
+*/
 bool Graph::exist(int v){
 	Vertex *itr = adjList->head;
-	//cout << adjList->tail->next->id << endl;
+
 	if(itr != NULL){
 		while(itr != adjList->tail && itr->id != v){
 			itr = itr->next;
@@ -337,6 +374,14 @@ void Graph::deleteEdge(int u, int v){
 	nE--;
 }
 
+/*
+======================= getAdjacents(int v) =======================
+	Revorna um vetor deinteiros representando os vertices adjacentes.
+	
+	Parametros:
+	
+	int v -> Inteiro representando o id do vertice.
+*/
 vector<Edge*> Graph::getAdjacents(int v){
 	Vertex *itr = adjList->head;
 	vector<Edge*> adja;
@@ -468,6 +513,18 @@ void Graph::geraCompleto(){
 	}
 }
 
+/*
+======================= isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool& isBi) =======================
+	Verifica se o grafo eh bipartido ou nao atraves do DFS.
+	
+	Parametros:
+	
+	int id -> id do vertice a ser visitado.
+	bool* isVisited -> vetor para marcar e verificar se os vertices foram visitados.
+	int& it -> iteracao atual.
+	int8_t* conj -> marca a qual conjunto de vertices so vertices foram colocados.
+	bool& isBi -> diz se o grafo e ou nao bipartido.
+*/
 void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool& isBi){
 	//Pilha para o DFS
 	stack<Vertex*> stack;
@@ -504,6 +561,10 @@ void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool
 	}
 }
 
+/*
+======================= isBipartite() =======================
+	Verifica se o grafo eh bipartido ou nao atraves do DFS.
+*/
 bool Graph::isBipartite(){
 	bool* isVisited = new bool[maxId];
 	bool isBi = true;
