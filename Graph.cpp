@@ -598,6 +598,10 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
+/*
+======================= complementaryGraph() =======================
+	Retorna o grafo complementar a G.
+*/
 Graph* Graph::complementaryGraph(){
 	Graph* grafo = new Graph;
 	
@@ -623,6 +627,15 @@ Graph* Graph::complementaryGraph(){
 	return grafo;
 }
 
+/*
+======================= inducedGraph(vector<int> V, Graph* G) =======================
+	Retorna o grafo induzido pelo conjunto de vertices V' que eh subconjunto do conjunto de vertices V do grafo G.
+	
+	Parametros:
+	
+	vector<int> V -> conjunto de vertices V' pertencente ao conjunto V do grafo G.
+	Graph* G -> grafo G = (V,E).
+*/
 AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 	vector<int>::iterator itr;
 	AdjacencyList* grafo = new AdjacencyList;
