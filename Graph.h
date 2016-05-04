@@ -73,6 +73,7 @@ public:
 	void deleteEdge(int, int);
 	int getOrder();
 	void DFS();
+	Graph* complementaryGraph();
 	bool exist(int v);
 	void DFSUtil(int, bool*);
 	bool isConnected();

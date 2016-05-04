@@ -328,12 +328,12 @@ bool Graph::exist(int v){
 void Graph::addVertex(int v){
 	if(!exist(v)){
 		if(nV > 0){
-			//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias
+			//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias		
+			cout << v << endl;
 			Vertex *itr;
 			Vertex *new_vertex = new Vertex(v);
 			maxId = (v > maxId)?v:maxId;
-			nV++;
-	
+			
 			if(v >= adjList->head->id && v <= adjList->tail->id){
 				for(itr = getBegin(v); itr != adjList->tail->next && itr->id <= v; itr = itr->next);
 			
@@ -352,8 +352,10 @@ void Graph::addVertex(int v){
 				itr->prev = new_vertex;
 			}
 		}else{
+			cout << v << " " << 1 << endl; 
 			adjList->push_front(v);
 		}
+		nV++;
 	}else{
 		cout << "\nVertice ja existe!\n";
 		return;
@@ -596,6 +598,31 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
+Graph* Graph::complementaryGraph(){
+	Graph* grafo = new Graph;
+	
+	for(Vertex* itr = adjList->head; itr != adjList->tail->next; itr = itr->next){
+		grafo->addVertex(itr->id);
+	}
+	
+	for(Vertex* itr = adjList->head; itr != adjList->tail->next; itr = itr->next){
+		for(Vertex* itr1 = adjList->head; itr1 != adjList->tail->next; itr1 = itr1->next){
+			
+			if(itr1->id != itr->id){
+				Edge* adj;
+
+				for(adj = itr->adjL; adj != NULL && adj->id != itr1->id; adj = adj->next);
+				
+				if(!adj){
+					grafo->addEdge(itr->id, itr1->id);
+				}
+			}
+		}
+	}
+	
+	return grafo;
+}
+
 AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 	vector<int>::iterator itr;
 	AdjacencyList* grafo = new AdjacencyList;
@@ -622,7 +649,6 @@ AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 				
 			if(add){
 				Edge* eItr = itr0->adjL;
-			
 				Edge* temp = itr0->adjL;
 				
 				itr0->adjL = new Edge(edges[j][i]->id, edges[j][i]->weight);
@@ -650,9 +676,8 @@ string Graph::print(){
 		Edge *itr1 = itr->adjL;
 		
 		while(itr1 != NULL){
-			cout << "(" << itr1->id <<", " << itr1->weight << ")";
 			stream << "(" << itr1->id <<", " << itr1->weight << ")";
-			if(itr1->next != NULL) stream << "->"; else stream << ";";
+			if(itr1->next != NULL)stream << "->"; else stream << ";";
 			itr1 = itr1->next;
 		}
 		

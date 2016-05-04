@@ -109,7 +109,8 @@ int showMenu(void){
 	cout << "14 - Vertice v eh adjacente a u?" << endl;
 	cout << "15 - Imprimir lista de adjacencias." << endl;
 	cout << "16 - Criar grafo induzido." << endl;
-	cout << "17 - Sair..." << endl;
+	cout << "17 - Grafo complementar." << endl;
+	cout << "18 - Sair..." << endl;
 	cout << endl;
 	cout << "> ";
 	
@@ -363,27 +364,51 @@ void executeOption(int op, Graph *grafo, string output){
 		cout << "\nInforme a quantidade de vertices: ";
 		cin >> n;
 		for(int i = 0; i < n; i++){
+			cout << "Entre com o vertice " << i << ": ";
 			cin >> u;
 			V.push_back(u);
 		} 
 
 		AdjacencyList *grap = Graph::inducedGraph(V, grafo);
 		Vertex *itr = grap->head;
+		ostringstream stream;
 		
+		cout << '\n' << endl;
+		stream << '\n' << endl;
 		while(itr != grap->tail->next){
-			cout << itr->id << " -> ";
+			cout << itr->id << ": ";
+			stream << itr->id << ": ";
 			for(Edge* adj = itr->adjL; adj != NULL; adj = adj->next){
-				cout << adj->id << " ";
+				cout << "(" <<adj->id << ", " << adj->weight << ")" << " -> ";
+				stream << "(" <<adj->id << ", " << adj->weight << ")" << " -> ";
 			}
 			cout << endl;
+			stream << '\n';
+			
 			itr = itr->next; 
 		}
-		//string out = grap->print();
-		//cout << out << endl;
+		
+		saveToFile(output, stream.str());
 		waitUserAction();
 		break;
 		}
-	case 17:
+	case 17:{
+		Graph *compGrafo = grafo->complementaryGraph();
+		
+		string out = compGrafo->print();
+		char k;
+		
+		cout << "\nDeseja imprimir a lista de adjacencias na tela? (y/n)\n";
+		cout << "> ";
+		cin >> k;
+		
+		if(k == 'y') cout << out << endl;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}
+	case 18:
 		sair = true;
 		break;
 	}
