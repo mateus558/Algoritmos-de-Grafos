@@ -29,7 +29,8 @@ struct Edge{
 	int weight;
 	Vertex *dest;
 	Edge *next;
-
+	
+	Edge(int v, int weight);
 	Edge(Vertex *v, int weight);
 	Edge(Vertex *v);
 	~Edge();
@@ -37,17 +38,15 @@ struct Edge{
 
 typedef pair<Vertex*, Vertex*> PairV;
 
-class AdjacencyList{
-private:
+struct AdjacencyList{
 	Vertex *head;
 	Vertex *tail;
-public:	
+
 	AdjacencyList();
 	void push_front(int i);
 	void push_back(int i);
 	void deleteEdge(int u, int v);
 	PairV addEdge(PairV destins, int u, int v, int weight, int it);
-	friend class Graph;
 };
 
 class Graph{
@@ -77,7 +76,7 @@ public:
 	bool exist(int v);
 	void DFSUtil(int, bool*);
 	bool isConnected();
-	static Graph* inducedGraph(vector<pair<int, int> >);
+	static AdjacencyList* inducedGraph(vector<int>, Graph*);
 	int size();
 	vector<Edge*> getAdjacents(int);
 	int getMaxGraphDegree();

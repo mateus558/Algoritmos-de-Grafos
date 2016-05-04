@@ -211,15 +211,25 @@ void executeOption(int op, Graph *grafo, string output){
 		cout << "\nDeseja imprimir os adjacentes de que vertice?" << endl;
 		cout << "> ";
 		cin >> v;
+		
+		ostringstream stream;
 		vector<Edge*> adj = grafo->getAdjacents(v);
 		vector<Edge*>::iterator itr;
 		
-		cout << endl;
-		for(itr = adj.begin(); itr != adj.end(); itr++){
-			cout << (*itr)->id << " ";
-		}			
-		cout << endl;
+		if(adj.size() > 0){
+			stream << endl;
+			stream << "Adjacentes do vertice " << v << ": ";
+			for(itr = adj.begin(); itr != adj.end(); itr++){
+				stream << (*itr)->id << " ";
+			}			
+			stream << endl;
+		}else stream << "Vertice nao existe!\n" << endl;
 		
+		string out = stream.str();
+		
+		cout << out;
+		
+		saveToFile(output, out);
 		waitUserAction();
 		break;
 		}
@@ -348,18 +358,28 @@ void executeOption(int op, Graph *grafo, string output){
 		break;
 		}
 	case 16:{
-		int n, ini, fim;
-		vector<pair<int, int> > edges;
-		cout << "\nInforme a quantidade de arestas: ";
+		int n, u;
+		vector<int> V;
+		cout << "\nInforme a quantidade de vertices: ";
 		cin >> n;
 		for(int i = 0; i < n; i++){
-			cin >> ini >> fim;
-			edges.push_back(make_pair(ini, fim));
+			cin >> u;
+			V.push_back(u);
 		} 
 
-		Graph *grafo = Graph::inducedGraph(edges);
-		string out = grafo->print();
-		cout << out << endl;
+		AdjacencyList *grap = Graph::inducedGraph(V, grafo);
+		Vertex *itr = grap->head;
+		
+		while(itr != grap->tail->next){
+			cout << itr->id << " -> ";
+			for(Edge* adj = itr->adjL; adj != NULL; adj = adj->next){
+				cout << adj->id << " ";
+			}
+			cout << endl;
+			itr = itr->next; 
+		}
+		//string out = grap->print();
+		//cout << out << endl;
 		waitUserAction();
 		break;
 		}

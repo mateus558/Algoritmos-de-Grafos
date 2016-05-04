@@ -43,6 +43,8 @@ void AdjacencyList::push_front(int i){
 		}
 }
 
+
+
 PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	Vertex *dest = NULL;
 	Vertex *itr = NULL;

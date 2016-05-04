@@ -222,7 +222,7 @@ int Graph::getVertexDegree(int v){
 }
 
 /*
- ======================= getVertexDegree(int v) =======================
+ ======================= isAdjacent(int u, int v) =======================
 
  	Verifica se dois vertices sao adjacentes.
  
@@ -307,11 +307,14 @@ bool Graph::exist(int v){
 
 	if(itr != NULL){
 		while(itr != adjList->tail && itr->id != v){
+			if(itr->id == v){
+				return true;
+			}
 			itr = itr->next;
 		}
-	}else return false;
+	}
 	
-	return !(itr != adjList->tail->next);	
+	return false;
 }
 
 /*
@@ -351,6 +354,9 @@ void Graph::addVertex(int v){
 		}else{
 			adjList->push_front(v);
 		}
+	}else{
+		cout << "\nVertice ja existe!\n";
+		return;
 	}
 
 }
@@ -386,8 +392,12 @@ vector<Edge*> Graph::getAdjacents(int v){
 	Vertex *itr = adjList->head;
 	vector<Edge*> adja;
 	
-	while(itr->id != v){
+	while(itr != adjList->tail->next && itr->id != v){
 		itr = itr->next;
+	}
+	
+	if(itr == adjList->tail->next){
+		return adja;
 	}
 	
 	Edge *adj = itr->adjL;
@@ -548,11 +558,14 @@ void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool
 		stack.pop();
 		
 		for(Edge *itr = u->adjL; itr != NULL; itr = itr->next){
+			
 			if(!isVisited[itr->id]){
+			
 				isVisited[itr->id] = true;
 				conj[itr->id] = it%2;
 				it++;
 				stack.push(itr->dest);
+			
 			}else if(itr->id != id && conj[id] == conj[itr->id]){
 				isBi = false;
 				return;
@@ -583,17 +596,43 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
-Graph* Graph::inducedGraph(vector<pair<int, int> > edges){
-	vector<pair<int, int> >::iterator itr;
-	Graph* grafo = new Graph;
-			
-	for(itr = edges.begin(); itr != edges.end(); itr++){
-		grafo->addVertex((*itr).first);
-		grafo->addVertex((*itr).second);
-									cout << "dsk" <<endl;
-		grafo->addEdge((*itr).first, (*itr).second);
-	}
+AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
+	vector<int>::iterator itr;
+	AdjacencyList* grafo = new AdjacencyList;
+	vector<vector<Edge*> > edges;
 	
+	for(itr = V.begin(); itr != V.end(); itr++){
+		edges.push_back(G->getAdjacents((*itr)));
+		grafo->push_back((*itr));
+	}	
+	
+	Vertex *itr0 = grafo->head;
+	int j = 0;
+	
+	while(itr0 != grafo->tail->next){
+		int u = itr0->id;
+		
+		for(int i = 0; i < edges[j].size(); i++){
+			bool add = false;
+			
+			for(int k = 0; k < V.size(); k++){
+				if(V[k] == edges[j][i]->id)
+					add = true;
+			}
+				
+			if(add){
+				Edge* eItr = itr0->adjL;
+			
+				Edge* temp = itr0->adjL;
+				
+				itr0->adjL = new Edge(edges[j][i]->id, edges[j][i]->weight);
+				itr0->adjL->next = temp; 
+			}
+		}
+		
+		j++;
+		itr0 = itr0->next; 
+	}
 	return grafo;
 }
 
@@ -611,6 +650,7 @@ string Graph::print(){
 		Edge *itr1 = itr->adjL;
 		
 		while(itr1 != NULL){
+			cout << "(" << itr1->id <<", " << itr1->weight << ")";
 			stream << "(" << itr1->id <<", " << itr1->weight << ")";
 			if(itr1->next != NULL) stream << "->"; else stream << ";";
 			itr1 = itr1->next;
