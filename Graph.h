@@ -71,7 +71,12 @@ public:
 	void addEdge(int, int, int);
 	void addEdge(int, int);
 	void deleteEdge(int, int);
+	bool isArticulation(int);
+	void countComponents(Vertex*, int, int*);
+	int getWeight(int, int);
+	int nConnectedComponents();
 	int getOrder();
+	bool isBridge(int, int);
 	void DFS();
 	Graph* complementaryGraph();
 	bool exist(int v);

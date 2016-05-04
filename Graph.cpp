@@ -127,32 +127,32 @@ void Graph::DFSUtil(int id, bool* isVisited){
 
 */
 bool Graph::isConnected(){
+	//Inicializa vetor de visita com tamanho do vertice de maior Id com false
 	vector<bool> isVisited(maxId, false);
 	
-	stack<Vertex*> stack;	
-	Vertex* v = adjList->head;
-	int i = 1;
+	stack<Vertex*> stack;	//Cria pilha para a busca em profundidade	
+	Vertex* v = adjList->head;	//Seta o primeiro vertice a ser visitado como o primeiro da lista de adjacencia
+	int i = 1;	//Inicializa o numero de vertices visitados como 1
+	isVisited[adjList->head->id] = true;	//Seta o primeiro vertice como visitado
+	stack.push(v);	//Coloca v na pilha para explorar seus adjacentes
 	
-	isVisited[adjList->head->id] = true;
-	stack.push(v);
-	
-	while(!stack.empty()){
-		Vertex *u = stack.top();
-		Vertex *pred = u;
-		stack.pop();
+	while(!stack.empty()){ //Enquanto a pilha nao estiver vazia
+		Vertex *u = stack.top();	//Pega o vertice do topo da pilha
+		Vertex *pred = u;	//Seta ele como predecessor dos adjacentes
+		stack.pop();	//Retira u da pilha
 
-		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
-			int uId = itr->dest->id;
+		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){	//Iteracao dos adjacentes
+			int uId = itr->dest->id;	//id da aresta
 			
-			if(!isVisited[uId] && itr->dest != pred){
-				isVisited[uId] = true;
-				i++;
-				stack.push(itr->dest);
+			if(!isVisited[uId] && itr->dest != pred){	//Se o vertice da aresta nao foi visitado e eh diferente de seu predecessor
+				isVisited[uId] = true; 	//Seta u como visitado
+				i++;	//Incrementa o numero de visitados
+				stack.push(itr->dest);	//Coloca na pilha para visitar seus adjacentes
 			}
 		} 
 	}
-
-	return (i == nV);
+			
+	return (i == nV);	//Se foi possivel visitar todos vertices a partir do vertice selecionado arbitrariamente, entao o grafo eh conexo
 }
 
 /*
@@ -217,7 +217,7 @@ int Graph::getVertexDegree(int v){
 	while(itr != NULL && itr->id != v){
 		itr = itr->next;
 	}
-	cout << itr->degree << endl;
+
 	return (itr == NULL)?-1:itr->degree;
 }
 
@@ -232,16 +232,13 @@ int Graph::getVertexDegree(int v){
 	int v -> vertice de destino.
 */
 bool Graph::isAdjacent(int u, int v){
-	int dest;
-	int ori;
+	int dest = u;
+	int ori = v;
 	
 	if(!isOriented){
 		dest = min(u,v);
 	        ori = (dest == u)?v:u;
-	}else{
-		dest = u;
-		ori = v;
-	}	
+	}
 	
 	Vertex *itr = getBegin(dest);
 
@@ -288,7 +285,7 @@ void Graph::addEdge(int u, int v){
 	dests = adjList->addEdge(dests, u, v, -1, 0);
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
-		dests = adjList->addEdge(dests, v, u, -1, 1);
+		dests = adjList->addEdge(dests, u, v, -1, 1);
 	}
 	
 	nE++;
@@ -329,7 +326,6 @@ void Graph::addVertex(int v){
 	if(!exist(v)){
 		if(nV > 0){
 			//Verifica se o vertice a ser inserido esta proxima do inicio, do meio ou do fim da lista de adjacencias		
-			cout << v << endl;
 			Vertex *itr;
 			Vertex *new_vertex = new Vertex(v);
 			maxId = (v > maxId)?v:maxId;
@@ -340,7 +336,7 @@ void Graph::addVertex(int v){
 			}else if(v >= adjList->tail->id){
 				adjList->push_back(v);
 				return;
-			}else if(v < adjList->head->id){
+			}else if(v <= adjList->head->id){
 				adjList->push_front(v);
 				return;
 			}	
@@ -352,7 +348,6 @@ void Graph::addVertex(int v){
 				itr->prev = new_vertex;
 			}
 		}else{
-			cout << v << " " << 1 << endl; 
 			adjList->push_front(v);
 		}
 		nV++;
@@ -436,7 +431,7 @@ void Graph::removeVertex(int v){
 
 	Edge *itrE = itr->adjL;
 	stack<Edge*> stck;	
-	Vertex *var = itr;
+	Vertex *del = itr;
 	
 	if(!isOriented){
 		while(itrE != NULL){
@@ -464,11 +459,26 @@ void Graph::removeVertex(int v){
 		}
 	
 	}
-
-	Vertex *temp = var->next;
-	temp->prev = prev;
-	prev->next = temp;
-	var = temp;
+	
+	if(adjList->head == NULL || del == NULL){
+		return;
+	}
+	
+	if(del == adjList->head){
+		adjList->head = del->next;
+	}
+	
+	if(del == adjList->tail){
+		adjList->tail = del->next;
+	}
+	
+	if(del->next != NULL){
+		del->next->prev = del->prev;
+	}
+	
+	if(del->prev != NULL){
+		del->prev->next = del->next;
+	}
 	
 	nV--;
 }
@@ -598,6 +608,78 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
+void Graph::countComponents(Vertex *w, int n, int* components){
+	stack<Vertex*> stack;
+	
+	components[w->id] = n;
+	stack.push(w);
+
+	while(!stack.empty()){
+		Vertex *u = stack.top();
+		Vertex *pred = u;
+		stack.pop();
+		
+		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
+			int v = itr->dest->id;
+
+			if(!components[v] && v != pred->id){
+				components[v] = n;
+				stack.push(itr->dest);
+			}
+		}
+	}
+}
+
+int Graph::nConnectedComponents(){
+	int* components = new int[maxId];
+	int n = 0;
+	
+	for(int i = 0; i < maxId; components[i++] = 0);
+
+	for(Vertex *itr = adjList->head; itr != adjList->tail->next; itr = itr->next){
+		if(!components[itr->id]){
+			n++;
+			countComponents(itr, n, components);	
+		}
+	}
+
+	return n;
+}
+
+bool Graph::isArticulation(int v){
+	stack<Edge*> stack;
+	Vertex* itr;
+	
+	for(itr = getBegin(v); itr != adjList->tail->next && itr->id != v; itr = itr->next);
+	
+	if(itr == adjList->tail->next){
+		cout << "Vertice invalido!" << endl;
+		return false;
+	}	 
+	
+	for(Edge* adj = itr->adjL; adj != NULL; adj = adj->next){
+		stack.push(adj);
+	}	
+	
+	int nConPrev = nConnectedComponents();
+	
+	removeVertex(v);
+	
+	int nCon = nConnectedComponents();
+	
+	addVertex(v);
+
+	while(!stack.empty()){
+		Edge *u = stack.top();
+		stack.pop();
+		
+		addEdge(v, u->id, u->weight);
+	}
+	
+	return (nCon > nConPrev);
+	 
+}
+
 /*
 ======================= complementaryGraph() =======================
 	Retorna o grafo complementar a G.
@@ -647,9 +729,8 @@ AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 	}	
 	
 	Vertex *itr0 = grafo->head;
-	int j = 0;
 	
-	while(itr0 != grafo->tail->next){
+	for(int j = 0; itr0 != grafo->tail->next; itr0 = itr0->next, j++){
 		int u = itr0->id;
 		
 		for(int i = 0; i < edges[j].size(); i++){
@@ -669,13 +750,51 @@ AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 			}
 		}
 		
-		j++;
-		itr0 = itr0->next; 
 	}
 	return grafo;
 }
 
+int Graph::getWeight(int u, int v){
+	Vertex* itr;
+	
+	for(itr = getBegin(u); itr != adjList->tail->next && itr->id != u; itr = itr->next);
+	
+	if(itr == adjList->tail->next){
+		cerr << "Vertice nao existe." << endl; 
+		return -1;
+	}else if(itr->adjL != NULL && itr->adjL->weight == -1){
+		return -2;
+	}
+	
+	Edge *adj;
+	
+	for(adj = itr->adjL; adj != NULL && adj->id != v; adj = adj->next);
+	
+	return (adj == NULL)?-3:adj->weight;
+}
+
+bool Graph::isBridge(int u, int v){
+	int prevComp = nConnectedComponents();
+	int w = getWeight(u,v);
+	
+	if(w == -3){
+		cerr << "aresta nao existe." << endl;
+	}
+	
+	deleteEdge(u, v);
+	
+	int posComp = nConnectedComponents();
+	
+	if(w != -2){
+		addEdge(u, v, w);
+	}else addEdge(u, v);
+	
+	return (posComp > prevComp);
+}
+
 /*
+
+
 ======================= print() =======================
 	Funcao para imprimir a lista de adjacencias do grafo.
 */
@@ -683,20 +802,23 @@ string Graph::print(){
 	string printed;
 	ostringstream stream;
 	Vertex *itr = adjList->head;
+
 	stream << '\n';
-	while(itr != adjList->tail->next){
+	
+	for(;itr != adjList->tail->next; itr = itr->next){	//Percorre vertices
 		stream << itr->id << ": ";
+		
 		Edge *itr1 = itr->adjL;
 		
-		while(itr1 != NULL){
+		for(;itr1 != NULL; itr1 = itr1->next){	//Percorre arestas
 			stream << "(" << itr1->id <<", " << itr1->weight << ")";
-			if(itr1->next != NULL)stream << "->"; else stream << ";";
-			itr1 = itr1->next;
+			
+			if(itr1->next != NULL) stream << "->"; else stream << ";";
 		}
 		
 		stream << '\n';
-		itr = itr->next;
 	}
+	
 	stream << '\n';
 	
 	return stream.str();	

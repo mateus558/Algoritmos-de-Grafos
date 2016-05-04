@@ -21,10 +21,11 @@ int main(int argc, char** argv){
 
 		clear();
 		while(true){	
+
 			if(sair){
 				return 0;
 			}
-		
+
 			int option = showMenu();
 			
 			executeOption(option, grafo, output);
@@ -110,7 +111,10 @@ int showMenu(void){
 	cout << "15 - Imprimir lista de adjacencias." << endl;
 	cout << "16 - Criar grafo induzido." << endl;
 	cout << "17 - Grafo complementar." << endl;
-	cout << "18 - Sair..." << endl;
+	cout << "18 - Numero de componentes conectados." << endl;
+	cout << "19 - Eh vertice de articulacao?" << endl;
+	cout << "20 - Eh aresta ponte." << endl;
+	cout << "21 - Sair..." << endl;
 	cout << endl;
 	cout << "> ";
 	
@@ -408,7 +412,64 @@ void executeOption(int op, Graph *grafo, string output){
 		waitUserAction();
 		break;
 		}
-	case 18:
+	case 18:{
+		ostringstream stream;
+		string out;
+		
+		stream << "\nExistem " << grafo->nConnectedComponents() << " Componentes conectados.\n";
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}
+	case 19:{
+		int v;
+		ostringstream stream;
+		string out;
+		
+		cout << "\nInforme o vertice para verificar se eh de articulacao: ";
+		cin >> v;
+		
+		if(grafo->isArticulation(v)){
+			stream << "\nO vertice " << v << " eh de articulacao.\n";
+		}else{
+			stream << "\nO vertice " << v << " nao eh de articulacao.\n";
+		}
+		
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		} 
+	case 20:{
+		int u, v;
+		ostringstream stream;
+		string out;
+		
+		cout << "\nEntre com a aresta para ser testada.\n";
+		cout << "Aresta de origem: ";
+		cin >> u;
+		cout << "Aresta de destino: ";
+		cin >> v;
+		
+		if(grafo->isBridge(u, v)){
+			stream << "\nA aresta (" << u << ", " << v << ") eh uma ponte.\n";
+		}else{
+			stream << "\nA aresta (" << u << ", " << v << ") nao eh uma ponte.\n";
+		}
+		
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}
+	case 21:
 		sair = true;
 		break;
 	}

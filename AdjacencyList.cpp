@@ -38,7 +38,6 @@ void AdjacencyList::push_front(int i){
 			new_vertex->next = temp;
 			temp->prev = new_vertex;
 			new_vertex->prev = tail;
-			tail->next = new_vertex;
 			head = new_vertex;
 		}
 }
@@ -51,44 +50,48 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	
 	if(!destins.second){		
 		//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
-		if(head){
-			if(v >= head->id){
-				itr = head;
-			}else if(v >= tail->id) itr = tail;
-		}else itr = NULL;
+		if(tail != NULL && u >= tail->id) 
+			itr = tail;
+		else itr = head;
+		
 		//Procura o vertice de origem a partir do ponto selecionado anteriormente	
 		while(itr != tail->next && itr->id != u){
 			if(itr->id == v){
 				dest = itr;
-				destins.second = itr;
+				destins.first = itr;
 			}
 			itr = itr->next;
 		}
-		destins.first = itr;
-	}else itr = destins.second;
-		
-	itr->degree++;
+		destins.second = itr;
+	}else{
+		itr = destins.first;
+		dest = destins.second;
+	}
+	
+	if(itr != NULL)
+		itr->degree++;
 
 	//Verifica se esta executando relacao simetrica da operacao para grafo nao orientado
-	if(!it){
+	if(!it && !destins.first){
 		Vertex *find;
 		
 		//Verifica se o vertice de destino esta proxima do inicio, do meio ou do fim da lista de adjacencias
-		if(head){
-			if(v >= head->id){
-				find = head;
-			}else if(v >= tail->id) find = tail;
-		}else find = NULL;
+		if(tail != NULL && v >= tail->id) 
+			find = tail;
+		else find = head;
 		
 		//Procura o vertice de destino
 		while(find != NULL && find->id != v){
 			find = find->next;
 		}
 		dest = find;
-		destins.second = find;
-	}else dest = destins.first;
+		destins.first = dest;
+	}
 	
-	Edge *eItr = itr->adjL;
+	Edge *eItr;
+	
+	if(itr != NULL)
+		eItr = itr->adjL;
 	
 	//Adiciona aresta na lista de adjacencia do vertice de origem
 	if(itr->adjL != NULL){
