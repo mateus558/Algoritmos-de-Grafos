@@ -1,8 +1,5 @@
 #include "Graph.h"
-#include <algorithm>
 
-int Graph::removed;
-int Graph::ins;
 
 /*
 ======================= Graph() =======================
@@ -13,7 +10,6 @@ Graph::Graph(){
 	nV = 0;
 	nE = 0;
 	degree = -1;
-	removed = 0;
 	maxId = 0;
 	isOriented = false;
 	adjList = new AdjacencyList;
@@ -35,8 +31,6 @@ Graph::Graph(int V, bool isOriented){
 	nV = V;
 	nE = 0;
 	degree = -1;
-	removed = 0;
-	ins = 0;
 	adjList = new AdjacencyList;
 
 	for(int i = 0; i < V; i++){	
@@ -236,7 +230,7 @@ bool Graph::isAdjacent(int u, int v){
 	int ori = v;
 	
 	if(!isOriented){
-		dest = min(u,v);
+		dest = (u < v)?u:v;
 	        ori = (dest == u)?v:u;
 	}
 	
@@ -422,7 +416,6 @@ vector<Edge*> Graph::getAdjacents(int v){
 */
 
 void Graph::removeVertex(int v){
-	removed++;
 	Vertex *itr = getBegin(v);;
 	Vertex *prev = itr;
 	
@@ -545,12 +538,12 @@ void Graph::geraCompleto(){
 }
 
 /*
-======================= isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool& isBi) =======================
+======================= isBipartiteUtil(Vertex *v, bool* isVisited, int& it, int* conj, bool& isBi) =======================
 	Verifica se o grafo eh bipartido ou nao atraves do DFS.
 	
 	Parametros:
 	
-	int id -> id do vertice a ser visitado.
+	Vertex *v -> vertice v.
 	bool* isVisited -> vetor para marcar e verificar se os vertices foram visitados.
 	int& it -> iteracao atual.
 	int8_t* conj -> marca a qual conjunto de vertices so vertices foram colocados.
@@ -607,6 +600,16 @@ bool Graph::isBipartite(){
 	return isBi;
 }
 
+/*
+======================= countComponents(Vertex *w, int &n, int* components) =======================
+	Conta quantas componentes conexas tem no grafo através do DFS.
+	
+	Parametros:
+	
+	Vertex *w -> vertice fonte w.
+	int &n -> Contador de componentes conexas.
+	int* components -> vetor que diz a qual componente conexa certo vertice pertence.
+*/
 void Graph::countComponents(Vertex *w, int &n, int* components){
 	stack<Vertex*> stack;
 	components[w->id] = n;
@@ -628,6 +631,10 @@ void Graph::countComponents(Vertex *w, int &n, int* components){
 	}
 }
 
+/*
+======================= nConnectedComponents() =======================
+	Retorna a quantidade de componentes conexas do grafo.
+*/
 int Graph::nConnectedComponents(){
 	int* components = new int[maxId];
 	int n = 0;
@@ -644,6 +651,14 @@ int Graph::nConnectedComponents(){
 	return n;
 }
 
+/*
+======================= isArticulation(int v) =======================
+	Verifica se o vertice v eh de articulacao.
+	
+	Parametros:
+	
+	int v -> vertice v.
+*/
 bool Graph::isArticulation(int v){
 	stack<pair<int, int> > stack;
 	Vertex* itr;
@@ -756,6 +771,15 @@ AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 	return grafo;
 }
 
+/*
+======================= getWeight(int u, int v) =======================
+	Retorna o peso da aresta (u, v).
+	
+	Parametros:
+	
+	int u -> vertice de origem.
+	int v -> vertice de destino.
+*/
 int Graph::getWeight(int u, int v){
 	Vertex* itr;
 	
@@ -775,6 +799,15 @@ int Graph::getWeight(int u, int v){
 	return (adj == NULL)?-3:adj->weight;
 }
 
+/*
+======================= isBridge(int u, int v) =======================
+	Verifica se a aresta (u, v) eh uma ponte.
+	
+	Parametros:
+	
+	int u -> vertice de origem.
+	int v -> vertice de destino.
+*/
 bool Graph::isBridge(int u, int v){
 	int prevComp = nConnectedComponents();
 	int w = getWeight(u,v);

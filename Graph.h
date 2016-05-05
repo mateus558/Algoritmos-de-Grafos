@@ -55,11 +55,12 @@ private:
 	int nE;	//Cardinalidade do conjunto E de arestas ou arcos
 	int degree;	//Grau maximo do grafo
 	int maxId;
-	static int removed;
-	static int ins;
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
 	AdjacencyList *adjList;	//Lista de adjacências
-	void auxDeleteEdge(int u, int v);
+	void auxDeleteEdge(int, int);
+	void countComponents(Vertex*, int&, int*);
+	void DFSUtil(int, bool*);
+	void isBipartiteUtil(Vertex*, bool*, int&, int*, bool&);
 public:
 	Graph();	
 	Graph(int V, bool isOriented);
@@ -72,7 +73,6 @@ public:
 	void addEdge(int, int);
 	void deleteEdge(int, int);
 	bool isArticulation(int);
-	void countComponents(Vertex*, int&, int*);
 	int getWeight(int, int);
 	int nConnectedComponents();
 	int getOrder();
@@ -80,7 +80,6 @@ public:
 	void DFS();
 	Graph* complementaryGraph();
 	bool exist(int v);
-	void DFSUtil(int, bool*);
 	bool isConnected();
 	static AdjacencyList* inducedGraph(vector<int>, Graph*);
 	int size();
@@ -91,7 +90,6 @@ public:
 	int getVertexDegree(int);
 	int isRegular();
 	bool isBipartite();
-	void isBipartiteUtil(Vertex*, bool*, int&, int*, bool&);
 	bool isComplete();
 	~Graph();
 	friend class AdjacencyList;

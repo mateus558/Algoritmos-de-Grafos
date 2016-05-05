@@ -11,7 +11,7 @@ int showMenu(void);
 void executeOption(int, Graph*, string);
 void waitUserAction(void);
 void saveToFile(string, string);
-Graph* populateWeightedGraph(string);
+Graph* populateWeightedGraph(string);	
 
 int main(int argc, char** argv){
 	if(argc == 3){
