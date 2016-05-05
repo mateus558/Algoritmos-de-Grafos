@@ -15,11 +15,12 @@ Graph* populateWeightedGraph(string);
 
 int main(int argc, char** argv){
 	if(argc == 3){
-		string fileName(argv[1]), output(argv[2]);
+		string input(argv[1]), output(argv[2]);
 		
-		Graph *grafo = populateWeightedGraph(fileName);
+		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
+		
 		while(true){	
 
 			if(sair){
@@ -282,7 +283,10 @@ void executeOption(int op, Graph *grafo, string output){
 		cout << "\nDeseja saber o grau de qual vertice? " << endl;
 		cout << "> ";
 		cin >> v;
-		stream << "O vertice " << v << " tem grau " << grafo->getVertexDegree(v) << "\n";
+		int g = grafo->getVertexDegree(v);
+		if(g != -1){
+			stream << "O vertice " << v << " tem grau " << g << "\n";
+		}else cout << "Vertice nao existe" << endl;
 		string out(stream.str());
 		cout << out;
 		
@@ -374,6 +378,10 @@ void executeOption(int op, Graph *grafo, string output){
 		} 
 
 		AdjacencyList *grap = Graph::inducedGraph(V, grafo);
+		if(grap == NULL){
+			cout << "Erro na entrada do usuário!"<< endl;
+			return;
+		}
 		Vertex *itr = grap->head;
 		ostringstream stream;
 		

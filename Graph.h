@@ -72,7 +72,7 @@ public:
 	void addEdge(int, int);
 	void deleteEdge(int, int);
 	bool isArticulation(int);
-	void countComponents(Vertex*, int, int*);
+	void countComponents(Vertex*, int&, int*);
 	int getWeight(int, int);
 	int nConnectedComponents();
 	int getOrder();
@@ -91,7 +91,7 @@ public:
 	int getVertexDegree(int);
 	int isRegular();
 	bool isBipartite();
-	void isBipartiteUtil(int, bool*, int&, int8_t*, bool&);
+	void isBipartiteUtil(Vertex*, bool*, int&, int*, bool&);
 	bool isComplete();
 	~Graph();
 	friend class AdjacencyList;

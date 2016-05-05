@@ -151,7 +151,7 @@ bool Graph::isConnected(){
 			}
 		} 
 	}
-			
+
 	return (i == nV);	//Se foi possivel visitar todos vertices a partir do vertice selecionado arbitrariamente, entao o grafo eh conexo
 }
 
@@ -274,6 +274,7 @@ void Graph::addEdge(int u, int v, int weight){
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
 		dests = adjList->addEdge(dests, v, u, weight, 1);
+		nE++;
 	}
 	
 	nE++;
@@ -286,6 +287,7 @@ void Graph::addEdge(int u, int v){
 	//Se o grafo nao for orientado, repetir processo anterior para o vertice de destino
 	if(!isOriented){
 		dests = adjList->addEdge(dests, u, v, -1, 1);
+		nE++;
 	}
 	
 	nE++;
@@ -335,9 +337,11 @@ void Graph::addVertex(int v){
 			
 			}else if(v >= adjList->tail->id){
 				adjList->push_back(v);
+				nV++;
 				return;
 			}else if(v <= adjList->head->id){
 				adjList->push_front(v);
+				nV++;
 				return;
 			}	
 	
@@ -347,10 +351,11 @@ void Graph::addVertex(int v){
 				new_vertex->next = itr;
 				itr->prev = new_vertex;
 			}
+			nV++;
 		}else{
+			nV++;
 			adjList->push_front(v);
 		}
-		nV++;
 	}else{
 		cout << "\nVertice ja existe!\n";
 		return;
@@ -426,7 +431,12 @@ void Graph::removeVertex(int v){
 		prev = itr;
 		itr = itr->next;
 	}
-
+	
+	if(itr == adjList->tail->next){
+		cout << "vertice nao existe." << endl;
+		return;
+	}
+		
 	maxId = (v == maxId)?itr->prev->id:maxId;
 
 	Edge *itrE = itr->adjL;
@@ -547,38 +557,27 @@ void Graph::geraCompleto(){
 	int8_t* conj -> marca a qual conjunto de vertices so vertices foram colocados.
 	bool& isBi -> diz se o grafo e ou nao bipartido.
 */
-void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool& isBi){
+void Graph::isBipartiteUtil(Vertex *v, bool* isVisited, int& it, int* conj, bool& isBi){
 	//Pilha para o DFS
 	stack<Vertex*> stack;
 	
 	//Marcar o primeiro vertice como visitado e colocar na pilha
-	Vertex* v = getBegin(id);
-	
-	while(v != NULL && v->id != id){
-		v = v->next;
-	}
-	
-	if(v == NULL) return;
-
-	isVisited[id] = true;
-	conj[id] = it%2;
-	it++;
+	isVisited[v->id] = true;
+	conj[v->id] = it%2;
 	stack.push(v);
 	
 	while(!stack.empty()){
 		Vertex *u = stack.top();
 		stack.pop();
-		
+		it++;
 		for(Edge *itr = u->adjL; itr != NULL; itr = itr->next){
-			
-			if(!isVisited[itr->id]){
+			if(conj[itr->id] == -1){
 			
 				isVisited[itr->id] = true;
 				conj[itr->id] = it%2;
-				it++;
 				stack.push(itr->dest);
 			
-			}else if(itr->id != id && conj[id] == conj[itr->id]){
+			}else if(u->id != itr->id && conj[u->id] == conj[itr->id]){
 				isBi = false;
 				return;
 			}
@@ -593,22 +592,23 @@ void Graph::isBipartiteUtil(int id, bool* isVisited, int& it, int8_t* conj, bool
 bool Graph::isBipartite(){
 	bool* isVisited = new bool[maxId];
 	bool isBi = true;
-	int8_t* conj = new int8_t[maxId];
+	int* conj = new int[maxId];
 	int i = 2;
 	
 	for(int i = 0; i < maxId; isVisited[i++] = false);
-	for(int i = 0; i < maxId; conj[i++] = 0);
+	for(int i = 0; i < maxId; conj[i++] = -1);
 	
-	for(int v = 0; v < maxId; v++){
-		if(!isVisited[v]){
+	for(Vertex *v = adjList->head; v != adjList->tail->next; v = v->next){
+		if(conj[v->id] == -1){
 			isBipartiteUtil(v, isVisited, i, conj, isBi);
+			if(!isBi) return false;
 		}
 	}	
 	
 	return isBi;
 }
 
-void Graph::countComponents(Vertex *w, int n, int* components){
+void Graph::countComponents(Vertex *w, int &n, int* components){
 	stack<Vertex*> stack;
 	
 	components[w->id] = n;
@@ -622,7 +622,7 @@ void Graph::countComponents(Vertex *w, int n, int* components){
 		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
 			int v = itr->dest->id;
 
-			if(!components[v] && v != pred->id){
+			if(components[v] == 0 && v != pred->id){
 				components[v] = n;
 				stack.push(itr->dest);
 			}
@@ -637,7 +637,7 @@ int Graph::nConnectedComponents(){
 	for(int i = 0; i < maxId; components[i++] = 0);
 
 	for(Vertex *itr = adjList->head; itr != adjList->tail->next; itr = itr->next){
-		if(!components[itr->id]){
+		if(components[itr->id] == 0){
 			n++;
 			countComponents(itr, n, components);	
 		}
@@ -730,6 +730,10 @@ AdjacencyList* Graph::inducedGraph(vector<int> V, Graph* G){
 	
 	Vertex *itr0 = grafo->head;
 	
+	if(V.size() == 0){
+		return NULL;
+	}	
+
 	for(int j = 0; itr0 != grafo->tail->next; itr0 = itr0->next, j++){
 		int u = itr0->id;
 		
@@ -776,9 +780,13 @@ int Graph::getWeight(int u, int v){
 bool Graph::isBridge(int u, int v){
 	int prevComp = nConnectedComponents();
 	int w = getWeight(u,v);
-	
+	if(w == -1){
+		cerr << "\nUm dos ou os dois vertices nao existe!" << endl;
+		return false;
+	}
 	if(w == -3){
-		cerr << "aresta nao existe." << endl;
+		cerr << "\naresta nao existe." << endl;
+		return false;
 	}
 	
 	deleteEdge(u, v);

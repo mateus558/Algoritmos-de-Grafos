@@ -119,7 +119,12 @@ void AdjacencyList::deleteEdge(int u, int v){
 	while(itr != tail->next && itr->id != u){
 		itr = itr->next;
 	}
-
+	
+	if(itr == tail->next){
+		cout << "Vertice nao existe." << endl;
+		return;
+	}
+	
 	Edge *adj = itr->adjL;	
 	Edge *prev = adj;
 	
@@ -128,6 +133,11 @@ void AdjacencyList::deleteEdge(int u, int v){
 		prev = adj;
 		adj = adj->next;
 	}	
+	
+	if(adj == NULL){
+		cout << "Aresta nao existe." << endl;
+		return;
+	}
 	
 	//Verifica se a remocao vai ser feita no inicio ou no meio da lista de adjacencias
 	if(adj == itr->adjL){
