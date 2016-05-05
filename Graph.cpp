@@ -1,6 +1,5 @@
 #include "Graph.h"
 
-
 /*
 ======================= Graph() =======================
 	Construtor padrao do grafo, inicializa um grafo vazio.
