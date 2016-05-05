@@ -426,7 +426,6 @@ void Graph::removeVertex(int v){
 	Vertex *itr = getBegin(v);;
 	Vertex *prev = itr;
 	
-	cout <<"removing "<< v <<endl;
 	while(itr != adjList->tail->next && itr->id != v){
 		prev = itr;
 		itr = itr->next;
@@ -489,7 +488,7 @@ void Graph::removeVertex(int v){
 	if(del->prev != NULL){
 		del->prev->next = del->next;
 	}
-	
+	delete del;
 	nV--;
 }
 
@@ -610,7 +609,6 @@ bool Graph::isBipartite(){
 
 void Graph::countComponents(Vertex *w, int &n, int* components){
 	stack<Vertex*> stack;
-	
 	components[w->id] = n;
 	stack.push(w);
 
@@ -647,7 +645,7 @@ int Graph::nConnectedComponents(){
 }
 
 bool Graph::isArticulation(int v){
-	stack<Edge*> stack;
+	stack<pair<int, int> > stack;
 	Vertex* itr;
 	
 	for(itr = getBegin(v); itr != adjList->tail->next && itr->id != v; itr = itr->next);
@@ -657,8 +655,9 @@ bool Graph::isArticulation(int v){
 		return false;
 	}	 
 	
-	for(Edge* adj = itr->adjL; adj != NULL; adj = adj->next){
-		stack.push(adj);
+	for(Edge* adj = itr->adjL; adj != NULL;){
+		stack.push(make_pair(adj->id, adj->weight));
+		adj = adj->next;
 	}	
 	
 	int nConPrev = nConnectedComponents();
@@ -670,14 +669,13 @@ bool Graph::isArticulation(int v){
 	addVertex(v);
 
 	while(!stack.empty()){
-		Edge *u = stack.top();
+		pair<int, int> u = stack.top();
 		stack.pop();
 		
-		addEdge(v, u->id, u->weight);
+		addEdge(v, u.first, u.second);
 	}
 	
 	return (nCon > nConPrev);
-	 
 }
 
 /*
@@ -833,9 +831,18 @@ string Graph::print(){
 }
 
 Graph::~Graph(){
-	nV = 0;
-	nE = 0;
-	delete adjList->head;
-	adjList->head = NULL;
+	Vertex *itr = adjList->head;
+	
+	while(itr != adjList->tail->next){
+		Edge *adj = itr->adjL;
+		Vertex *delv = itr;
+		while(adj != NULL){
+			Edge *dela = adj;
+			adj = adj->next;
+			delete dela;
+		}
+		itr = itr->next;
+		delete itr;
+	}
 	cout << "\nGraph deleted successfully!" << endl;
 }

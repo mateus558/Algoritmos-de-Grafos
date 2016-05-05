@@ -188,7 +188,8 @@ void executeOption(int op, Graph *grafo, string output){
 			cout << "Id do vertice " << i << ": ";  
 			cin >> v;
 			grafo->removeVertex(v);
-			stream << v << " foi removido.\n\n";
+			stream << "\n"<< v << " foi removido.\n";
+			cout << stream.str();
 		}
 		
 		saveToFile(output, stream.str());
@@ -478,6 +479,7 @@ void executeOption(int op, Graph *grafo, string output){
 		break;
 		}
 	case 21:
+		delete grafo;
 		sair = true;
 		break;
 	}

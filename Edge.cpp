@@ -20,12 +20,12 @@ Edge::Edge(Vertex *v){
 }
 
 Edge::~Edge(){
-	Edge *current = next;
+	/*Edge *current = next;
 	
 	while(current != NULL){
 		Edge *prox = current->next;
 		delete current;
 		current = prox;
 	}
-	next = NULL;
+	next = NULL;*/
 }

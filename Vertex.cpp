@@ -23,7 +23,7 @@ Vertex::Vertex(int id){
 }
 
 Vertex::~Vertex(){
-	Vertex *current = next;
+	/*Vertex *current = next;
 	
 	while(current != 0){
 		Vertex *prox = current->next;
@@ -31,5 +31,5 @@ Vertex::~Vertex(){
 		delete current;
 		current = prox;
 	}	
-	next = 0;
+	next = 0;*/
 }

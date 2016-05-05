@@ -138,7 +138,7 @@ void AdjacencyList::deleteEdge(int u, int v){
 		cout << "Aresta nao existe." << endl;
 		return;
 	}
-	
+	Edge *del = adj;
 	//Verifica se a remocao vai ser feita no inicio ou no meio da lista de adjacencias
 	if(adj == itr->adjL){
 		Edge *temp = adj->next;
@@ -147,4 +147,6 @@ void AdjacencyList::deleteEdge(int u, int v){
 	}else{
 		prev->next = adj->next;
 	}
+	
+	delete del;
 }
