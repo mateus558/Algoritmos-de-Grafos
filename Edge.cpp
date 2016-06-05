@@ -7,6 +7,14 @@ Edge::Edge(Vertex *v, int weight){
 	next = NULL;
 }
 
+Edge::Edge(Vertex *u, Vertex *v, int weight){
+	this->ini = u;
+	this->dest = v;
+	this->id = v->id;
+	this->weight = weight;
+	next = NULL;
+}
+
 Edge::Edge(int v, int weight){
 	this->id = v;
 	this->weight = weight;
@@ -18,6 +26,8 @@ Edge::Edge(Vertex *v){
 	this->id = v->id;
 	next = NULL;
 }
+
+
 
 Edge::~Edge(){
 	/*Edge *current = next;

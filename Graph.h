@@ -1,11 +1,15 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
+#define INF INT_MAX
 #include <iostream>
 #include <ctime>
 #include <utility> 
 #include <stack>
+#include <queue>
 #include <vector>
 #include <sstream>
+#include <climits>
+#include "UnionFind.h"
 
 using namespace std;
 
@@ -13,6 +17,8 @@ struct Edge;
 
 struct Vertex{
 	int id;
+	int d;
+	Vertex *dad;
 	int degree;
 	Vertex *prev;
 	Vertex *next;
@@ -26,11 +32,13 @@ struct Vertex{
 struct Edge{
 	int id;
 	int weight;
+	Vertex *ini;
 	Vertex *dest;
 	Edge *next;
 	
 	Edge(int v, int weight);
 	Edge(Vertex *v, int weight);
+	Edge(Vertex *u, Vertex *v, int weight);
 	Edge(Vertex *v);
 	~Edge();
 };
@@ -48,18 +56,22 @@ struct AdjacencyList{
 	PairV addEdge(PairV destins, int u, int v, int weight, int it);
 };
 
+
 class Graph{
 private:
 	int nV;	//Cardinalidade do conjunto V de vertices
 	int nE;	//Cardinalidade do conjunto E de arestas ou arcos
 	int degree;	//Grau maximo do grafo
 	int maxId;
+	vector<int> dist;
 	bool isOriented;	//Booleano dizendo se o grafo é orientado
 	AdjacencyList *adjList;	//Lista de adjacências
 	void auxDeleteEdge(int, int);
 	void countComponents(Vertex*, int&, int*);
 	void DFSUtil(int, bool*);
 	void isBipartiteUtil(Vertex*, bool*, int&, int*, bool&);
+	vector<Vertex*> initializeSingleSource(vector<Vertex*>, int);
+	vector<Vertex*> relax(Edge*, Vertex*, vector<Vertex*>, int*, int);
 public:
 	Graph();	
 	Graph(int V, bool isOriented);
@@ -76,6 +88,9 @@ public:
 	int nConnectedComponents();
 	int getOrder();
 	bool isBridge(int, int);
+	int djkstra(int, int);
+	int MSTKruskal();
+	int MSTPrim();
 	void DFS();
 	Graph* complementaryGraph();
 	bool exist(int v);
@@ -91,6 +106,7 @@ public:
 	bool isBipartite();
 	bool isComplete();
 	~Graph();
+	
 	friend class AdjacencyList;
 };
 

@@ -47,6 +47,7 @@ void AdjacencyList::push_front(int i){
 PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	Vertex *dest = NULL;
 	Vertex *itr = NULL;
+	Vertex *ini = NULL;
 	
 	if(!destins.second){		
 		//Verifica se o vertice de origem esta proxima do inicio, do meio ou do fim da lista de adjacencias
@@ -62,9 +63,11 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 			}
 			itr = itr->next;
 		}
+		ini = itr;
 		destins.second = itr;
 	}else{
 		itr = destins.first;
+		ini = destins.first;
 		dest = destins.second;
 	}
 	
@@ -95,10 +98,10 @@ PairV AdjacencyList::addEdge(PairV destins, int u, int v, int weight, int it){
 	
 	//Adiciona aresta na lista de adjacencia do vertice de origem
 	if(itr->adjL != NULL){
-		Edge *new_edge = new Edge(dest, weight);
+		Edge *new_edge = new Edge(ini, dest, weight);
 		new_edge->next = eItr->next;
 		eItr->next = new_edge;
-	}else itr->adjL = new Edge(dest, weight);
+	}else itr->adjL = new Edge(ini, dest, weight);
 
 	return destins;
 }

@@ -20,7 +20,7 @@ int main(int argc, char** argv){
 		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
-		
+		grafo->MSTKruskal();
 		while(true){	
 
 			if(sair){

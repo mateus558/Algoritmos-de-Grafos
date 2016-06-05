@@ -1,5 +1,17 @@
 #include "Graph.h"
 
+struct comparator{
+	bool operator()(const Vertex* u, const Vertex* v){
+		return u->d > v->d;
+	} 
+};
+
+struct edgeComp{
+	bool operator()(const Edge* u, const Edge* v){
+		return u->weight > v->weight;
+	} 
+};
+
 /*
 ======================= Graph() =======================
 	Construtor padrao do grafo, inicializa um grafo vazio.
@@ -31,7 +43,7 @@ Graph::Graph(int V, bool isOriented){
 	nE = 0;
 	degree = -1;
 	adjList = new AdjacencyList;
-
+	dist = vector<int>(V, INF);
 	for(int i = 0; i < V; i++){	
 		adjList->push_back(i);
 	}
@@ -192,6 +204,93 @@ Vertex* Graph::getBegin(int v){
 */
 int Graph::getOrder(){
 	return nV;
+}
+
+vector<Vertex*> Graph::initializeSingleSource(vector<Vertex*> minHeap, int i){
+	Vertex *itr = adjList->head;
+	
+	while(itr != NULL){
+		if(itr->id != i)
+			itr->d = INF;
+		else itr->d = 0;
+		itr->dad = NULL;
+		minHeap.push_back(itr);
+		push_heap(minHeap.begin(), minHeap.end(), comparator());
+		itr = itr->next;
+	}
+	
+	return minHeap;
+}
+
+vector<Vertex*> Graph::relax(Edge *v, Vertex *u, vector<Vertex*> minHeap, int *dis, int k){
+	if(v->dest->d > u->d + v->weight){
+		v->dest->d = u->d + v->weight;
+		v->dest->dad = u;
+		make_heap(minHeap.begin(), minHeap.end(), comparator());
+		if(v->id == k){
+			*dis = v->dest->d;
+		}
+	}
+	
+	return minHeap;
+}
+
+int Graph::djkstra(int i, int k){
+	int dis = 0;
+	
+	vector<Vertex*> minHeap;
+	vector<Vertex*> S;
+	
+	minHeap = initializeSingleSource(minHeap, i);	
+	make_heap(minHeap.begin(), minHeap.end(), comparator());
+
+	while(!minHeap.empty()){
+		Vertex *u = minHeap.front();
+		S.push_back(u);
+		pop_heap(minHeap.begin(), minHeap.end(), comparator());
+		minHeap.pop_back();
+		
+		for(Edge *v = u->adjL; v != NULL; v = v->next){
+			minHeap = relax(v, u, minHeap, &dis, k);
+		}
+	}
+
+	return dis;
+}
+
+int Graph::MSTKruskal(){
+	Union_Find UF(nV);
+	
+	priority_queue<Edge*, vector<Edge*>, edgeComp> minHeap;
+	
+	int dist = 0;
+	
+	Vertex* itr = adjList->head;
+	
+	for(; itr != NULL; itr = itr->next){
+		Edge* eitr;
+		Edge* ant = NULL;
+		for(eitr = itr->adjL; eitr != NULL; eitr = eitr->next){
+			minHeap.push(eitr);
+			ant = eitr;
+		}
+	}
+	
+	while(!minHeap.empty()){
+		Edge* e = minHeap.top();
+		minHeap.pop();
+
+		if(!UF.find(e->ini->id, e->id)){
+			dist += e->weight;
+			UF.unite(e->ini->id, e->id);
+		}
+	}
+	cout << dist << endl;
+	return dist;
+}
+
+int Graph::MSTPrim(){
+
 }
 
 /*
