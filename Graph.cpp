@@ -285,12 +285,38 @@ int Graph::MSTKruskal(){
 			UF.unite(e->ini->id, e->id);
 		}
 	}
-	cout << dist << endl;
+
 	return dist;
 }
 
 int Graph::MSTPrim(){
-
+	srand(time(NULL));
+	
+	int dis(0), i(0);
+	vector<Vertex*> minHeap;
+	vector<bool> inMST(nV, false);
+	
+	minHeap = initializeSingleSource(minHeap, i);	
+	make_heap(minHeap.begin(), minHeap.end(), comparator());
+	
+	while(!minHeap.empty()){
+		Vertex *u = minHeap.front();
+		
+		pop_heap(minHeap.begin(), minHeap.end(), comparator());
+		minHeap.pop_back();
+		inMST[u->id] = true;
+		dis += u->d;
+		
+		for(Edge *v = u->adjL; v != NULL; v = v->next){
+			if(!inMST[v->id] && v->weight < v->dest->d){
+				v->dest->d = v->weight;
+				v->dest->dad = u;
+				make_heap(minHeap.begin(), minHeap.end(), comparator());
+			}
+		}
+	}
+	
+	return dis;
 }
 
 /*
