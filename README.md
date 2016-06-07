@@ -4,6 +4,7 @@
 <b>Algorithms already implemented:</b>
 - Djkstra algorithm for single source shortest path;
 - Kruskal algorithm for minimum spanning tree;
+- Prim's algorithm for minimum spanning tree;
 - Algorithm to find the complementary graph;
 - Count the number of connected components;
 - Depth First Search;
