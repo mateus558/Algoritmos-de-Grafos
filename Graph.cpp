@@ -319,6 +319,26 @@ int Graph::MSTPrim(){
 	return dis;
 }
 
+int** Graph::floydWarshall(int **W){
+	int n = nV;
+	vector<int**> D;
+	
+	D.push_back(W);
+	
+	for(int k = 1; k < n; k++){
+		D[k] = new int*[n];
+		for(int a = 0; a < n; a++, D[k][a] = new int[nV]);
+		
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j < n; j++){
+				D[k][i][j] = min(D[k-1][i][j], D[k-1][i][k] + D[k-1][k][j]);
+			}
+		}
+	}	
+	
+	return D[D.size()-1];
+}
+
 /*
  ======================= getVertexDegree(int v) =======================
 

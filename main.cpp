@@ -35,7 +35,7 @@ int main(int argc, char** argv){
 		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
-		cout << grafo->MSTPrim() << endl;
+
 		while(true){	
 
 			if(sair){

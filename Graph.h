@@ -1,6 +1,7 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 #define INF INT_MAX
+#define min(a,b) ((a < b)?(a:b))
 #include <iostream>
 #include <ctime>
 #include <utility> 
@@ -56,9 +57,8 @@ struct AdjacencyList{
 	PairV addEdge(PairV destins, int u, int v, int weight, int it);
 };
 
-
 class Graph{
-private:
+  private:
 	int nV;	//Cardinalidade do conjunto V de vertices
 	int nE;	//Cardinalidade do conjunto E de arestas ou arcos
 	int degree;	//Grau maximo do grafo
@@ -72,7 +72,7 @@ private:
 	void isBipartiteUtil(Vertex*, bool*, int&, int*, bool&);
 	vector<Vertex*> initializeSingleSource(vector<Vertex*>, int);
 	vector<Vertex*> relax(Edge*, Vertex*, vector<Vertex*>, int*, int);
-public:
+  public:
 	Graph();	
 	Graph(int V, bool isOriented);
 	string print();
@@ -91,6 +91,7 @@ public:
 	int djkstra(int, int);
 	int MSTKruskal();
 	int MSTPrim();
+	int** floydWarshall(int**);
 	void DFS();
 	Graph* complementaryGraph();
 	bool exist(int v);
