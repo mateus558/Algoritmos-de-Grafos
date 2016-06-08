@@ -1,6 +1,7 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
-#define INF INT_MAX
+#define INF 1000000000
+#define NIL -1
 #define min(a,b) ((a < b)?(a:b))
 #include <iostream>
 #include <ctime>
@@ -44,6 +45,7 @@ struct Edge{
 	~Edge();
 };
 
+typedef vector<vector<int> > Matrix;
 typedef pair<Vertex*, Vertex*> PairV;
 
 struct AdjacencyList{
@@ -91,7 +93,8 @@ class Graph{
 	int djkstra(int, int);
 	int MSTKruskal();
 	int MSTPrim();
-	int** floydWarshall(int**);
+	Matrix getWeightMatrix();
+	Matrix floydWarshall(Matrix);
 	void DFS();
 	Graph* complementaryGraph();
 	bool exist(int v);

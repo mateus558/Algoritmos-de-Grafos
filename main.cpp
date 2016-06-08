@@ -15,6 +15,7 @@
 
 #include "Graph.h"
 #include <limits>
+#include <iomanip>
 #include <fstream>
 
 using namespace std;
@@ -75,7 +76,7 @@ Graph* populateWeightedGraph(string fileName){
 		weights.push_back(weight);
 	}
 
-	Graph *grafo = new Graph(nV, Graph::ehOriented(edges));
+	Graph *grafo = new Graph(nV, true);
 
 	for(int i = 0; i < edges.size(); i++){
 		grafo->addEdge(edges[i].first, edges[i].second, weights[i]);

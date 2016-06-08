@@ -38,7 +38,8 @@ com uma quantidade inicial de vertices e definir se o grafo e orientado ou nao.
 	bool isOriented -> Booleano para definir se o grafo é orientado ou nao. 
 */
 Graph::Graph(int V, bool isOriented){
-	isOriented = isOriented;
+	this->isOriented = isOriented;
+	cout << isOriented << endl;
 	nV = V;
 	nE = 0;
 	degree = -1;
@@ -65,11 +66,12 @@ bool Graph::ehOriented(vector<pair<int,int> > edges){
 	for(itr = edges.begin(); itr != edges.end(); itr++){
 		for(itr1 = edges.begin(); itr1 != edges.end(); itr1++){
 			if(((*itr).first == (*itr1).second) && ((*itr).second == (*itr1).first)){
-				return false;
+				cout << (*itr).first << " " << (*itr1).second << " " << (*itr).second << " " << (*itr1).first << endl;
+				return true;
 			}
 		}
 	}
-	return true;
+	return false;
 }
 
 /*
@@ -206,6 +208,35 @@ int Graph::getOrder(){
 	return nV;
 }
 
+Matrix Graph::getWeightMatrix(){
+	Vertex *itr = adjList->head;
+	Matrix W = Matrix(nV, vector<int>(nV));
+	Edge *eitr;
+	int u, v;
+	
+	for(; itr != NULL; itr = itr->next){
+		u = itr->id;
+		eitr = itr->adjL;
+		
+		for(; eitr != NULL; eitr = eitr->next){
+			v = eitr->id;
+			W[u][v] = eitr->weight;
+		}
+	}
+	
+	for(int i = 0; i < nV; i++){
+		for(int j = 0; j < nV; j++){
+			if(W[i][j] == 0){
+				if(i != j){
+					W[i][j] = INF;
+				}else W[i][j] = INF;
+			}
+		}
+	}
+	
+	return W;
+}
+
 vector<Vertex*> Graph::initializeSingleSource(vector<Vertex*> minHeap, int i){
 	Vertex *itr = adjList->head;
 	
@@ -319,24 +350,17 @@ int Graph::MSTPrim(){
 	return dis;
 }
 
-int** Graph::floydWarshall(int **W){
+Matrix Graph::floydWarshall(Matrix W){
 	int n = nV;
-	vector<int**> D;
-	
-	D.push_back(W);
-	
+
 	for(int k = 1; k < n; k++){
-		D[k] = new int*[n];
-		for(int a = 0; a < n; a++, D[k][a] = new int[nV]);
-		
 		for(int i = 0; i < n; i++){
 			for(int j = 0; j < n; j++){
-				D[k][i][j] = min(D[k-1][i][j], D[k-1][i][k] + D[k-1][k][j]);
+				if (W[i][k] + W[k][j] < W[i][j])			            						W[i][j] = W[i][k] + W[k][j];
 			}
 		}
-	}	
-	
-	return D[D.size()-1];
+	}
+	return W;
 }
 
 /*
