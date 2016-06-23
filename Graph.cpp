@@ -66,12 +66,23 @@ bool Graph::ehOriented(vector<pair<int,int> > edges){
 	for(itr = edges.begin(); itr != edges.end(); itr++){
 		for(itr1 = edges.begin(); itr1 != edges.end(); itr1++){
 			if(((*itr).first == (*itr1).second) && ((*itr).second == (*itr1).first)){
-				cout << (*itr).first << " " << (*itr1).second << " " << (*itr).second << " " << (*itr1).first << endl;
 				return true;
 			}
 		}
 	}
 	return false;
+}
+
+list<Vertex*> Graph::directTransitiveClosure(int v){
+
+}
+
+list<Vertex*> Graph::indirectTransitiveClosure(int v){
+
+}
+
+AdjacencyList* Graph::transposeGraph(){
+
 }
 
 /*

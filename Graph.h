@@ -9,6 +9,7 @@
 #include <stack>
 #include <queue>
 #include <vector>
+#include <list>
 #include <sstream>
 #include <climits>
 #include "UnionFind.h"
@@ -93,6 +94,9 @@ class Graph{
 	int djkstra(int, int);
 	int MSTKruskal();
 	int MSTPrim();
+	list<Vertex*> directTransitiveClosure(int v);
+	list<Vertex*> indirectTransitiveClosure(int v);
+	AdjacencyList* transposeGraph();
 	Matrix getWeightMatrix();
 	Matrix floydWarshall(Matrix);
 	void DFS();
