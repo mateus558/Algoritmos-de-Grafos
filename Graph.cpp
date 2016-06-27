@@ -39,7 +39,6 @@ com uma quantidade inicial de vertices e definir se o grafo e orientado ou nao.
 */
 Graph::Graph(int V, bool isOriented){
 	this->isOriented = isOriented;
-	cout << isOriented << endl;
 	nV = V;
 	nE = 0;
 	degree = -1;

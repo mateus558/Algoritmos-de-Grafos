@@ -70,7 +70,7 @@ Graph* populateWeightedGraph(string fileName){
 	}
 		
 	in >> nV;
-	cout << nV <<endl;
+
 	while(in >> ini >> fim >> weight){
 		edges.push_back(make_pair(ini,fim));
 		weights.push_back(weight);
