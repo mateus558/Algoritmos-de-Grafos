@@ -74,16 +74,72 @@ bool Graph::ehOriented(vector<pair<int,int> > edges){
 }
 
 list<Vertex*> Graph::directTransitiveClosure(int v){
+	list<Vertex*> reached;
+	Vertex *itr = adjList->head;
+	
+	while(itr != NULL && itr->id != v){
+		itr = itr->next;
+	}
+	
+	if(!itr){ 
+		cout << "Vertex not found." << endl;
+	}
+	
+	bool* isVisited = new bool[maxId];
+	for(int i = 0; i < maxId; isVisited[i++] = false);
+	
+	//Pilha para o DFS
+	stack<Vertex*> stack;
+	
+	//Marcar o primeiro vertice como visitado e colocar na pilha
+	
+	isVisited[itr->id] = true;
+	stack.push(itr);
+	
+	while(!stack.empty()){
+		Vertex *u = stack.top();
+		stack.pop();
 
+		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
+			int uId = itr->dest->id;
+			
+			if(!isVisited[uId]){
+				reached.push_back(itr->ini);
+				isVisited[uId] = true;
+				stack.push(itr->dest);
+			}
+		} 
+	}
+	
+	return reached;
 }
-
+	
 list<Vertex*> Graph::indirectTransitiveClosure(int v){
-
+	Graph *transpose = transposeGraph();
+	
+	return transpose->directTransitiveClosure(v);
 }
 
-AdjacencyList* Graph::transposeGraph(){
-
+Graph* Graph::transposeGraph(){
+	Graph *g = new Graph;
+	
+	Vertex *itr = adjList->head;
+	
+	for(; itr != NULL; itr = itr->next){
+		g->addVertex(itr->id);
+	}
+	
+	for(; itr != NULL; itr = itr->next){
+		Edge *eitr = itr->adjL;
+		
+		for(; eitr != NULL; eitr = eitr->next){
+			g->addEdge(eitr->dest->id, eitr->ini->id);
+		}
+	}
+	
+	return g;
 }
+
 
 /*
 ======================= size() =======================

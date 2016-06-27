@@ -96,7 +96,7 @@ class Graph{
 	int MSTPrim();
 	list<Vertex*> directTransitiveClosure(int v);
 	list<Vertex*> indirectTransitiveClosure(int v);
-	AdjacencyList* transposeGraph();
+	Graph* transposeGraph();
 	Matrix getWeightMatrix();
 	Matrix floydWarshall(Matrix);
 	void DFS();

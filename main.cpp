@@ -36,7 +36,10 @@ int main(int argc, char** argv){
 		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
-
+		list<Vertex*> v = grafo->directTransitiveClosure(2);
+		for(Vertex* u:v){
+			cout << u->id << endl;
+		}
 		while(true){	
 
 			if(sair){
