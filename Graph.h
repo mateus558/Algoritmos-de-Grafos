@@ -94,8 +94,8 @@ class Graph{
 	int djkstra(int, int);
 	int MSTKruskal();
 	int MSTPrim();
-	list<Vertex*> directTransitiveClosure(int v);
-	list<Vertex*> indirectTransitiveClosure(int v);
+	void directTransitiveClosure(int v, list<Vertex*>&);
+	void indirectTransitiveClosure(int v, list<Vertex*>&);
 	Graph* transposeGraph();
 	Matrix getWeightMatrix();
 	Matrix floydWarshall(Matrix);

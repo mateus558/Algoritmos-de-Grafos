@@ -73,8 +73,7 @@ bool Graph::ehOriented(vector<pair<int,int> > edges){
 	return false;
 }
 
-list<Vertex*> Graph::directTransitiveClosure(int v){
-	list<Vertex*> reached;
+void Graph::directTransitiveClosure(int v, list<Vertex*> &reached){
 	Vertex *itr = adjList->head;
 	
 	while(itr != NULL && itr->id != v){
@@ -95,39 +94,33 @@ list<Vertex*> Graph::directTransitiveClosure(int v){
 	
 	isVisited[itr->id] = true;
 	stack.push(itr);
-	
+	reached.push_back(itr);
+
 	while(!stack.empty()){
 		Vertex *u = stack.top();
 		stack.pop();
 
 		for(Edge* itr = u->adjL; itr != NULL; itr = itr->next){
-			int uId = itr->dest->id;
-			
+			int uId = itr->id;
+
 			if(!isVisited[uId]){
-				reached.push_back(itr->ini);
+				reached.push_back(itr->dest);
 				isVisited[uId] = true;
 				stack.push(itr->dest);
 			}
 		} 
 	}
-	
-	return reached;
 }
 	
-list<Vertex*> Graph::indirectTransitiveClosure(int v){
+void Graph::indirectTransitiveClosure(int v, list<Vertex*> &reached){
 	Graph *transpose = transposeGraph();
-	
-	return transpose->directTransitiveClosure(v);
+	transpose->directTransitiveClosure(v, reached);
 }
 
 Graph* Graph::transposeGraph(){
-	Graph *g = new Graph;
+	Graph *g = new Graph(this->getOrder(), true);
 	
 	Vertex *itr = adjList->head;
-	
-	for(; itr != NULL; itr = itr->next){
-		g->addVertex(itr->id);
-	}
 	
 	for(; itr != NULL; itr = itr->next){
 		Edge *eitr = itr->adjL;
@@ -574,7 +567,7 @@ void Graph::addVertex(int v){
 				return;
 			}	
 	
-			if(itr->id >= v){
+			if(itr != NULL && itr->id >= v){
 				new_vertex->prev = itr->prev;
 				new_vertex->prev->next = new_vertex;
 				new_vertex->next = itr;

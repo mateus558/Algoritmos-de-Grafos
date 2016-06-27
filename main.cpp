@@ -36,10 +36,7 @@ int main(int argc, char** argv){
 		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
-		list<Vertex*> v = grafo->directTransitiveClosure(2);
-		for(Vertex* u:v){
-			cout << u->id << endl;
-		}
+		
 		while(true){	
 
 			if(sair){
@@ -73,12 +70,13 @@ Graph* populateWeightedGraph(string fileName){
 	}
 		
 	in >> nV;
-	
+	cout << nV <<endl;
 	while(in >> ini >> fim >> weight){
 		edges.push_back(make_pair(ini,fim));
 		weights.push_back(weight);
 	}
 
+	//Graph *grafo = new Graph(nV, Graph::ehOriented(edges));
 	Graph *grafo = new Graph(nV, true);
 
 	for(int i = 0; i < edges.size(); i++){
@@ -134,7 +132,9 @@ int showMenu(void){
 	cout << "18 - Numero de componentes conectados." << endl;
 	cout << "19 - Eh vertice de articulacao?" << endl;
 	cout << "20 - Eh aresta ponte." << endl;
-	cout << "21 - Sair..." << endl;
+	cout << "21 - Fecho transitivo direto" << endl;
+	cout << "22 - Fecho transitivo indireto" << endl;
+	cout << "23 - Sair..." << endl;
 	cout << endl;
 	cout << "> ";
 	
@@ -497,7 +497,56 @@ void executeOption(int op, Graph *grafo, string output){
 		waitUserAction();
 		break;
 		}
-	case 21:
+	case 21:{
+		int v;
+		ostringstream stream;
+		string out;
+		
+		cout << "\nEntre com o vertice para ser testado.\n";
+		cout << "Vertice de origem: ";
+		cin >> v;
+		
+		list<Vertex*> res;
+		
+		grafo->directTransitiveClosure(v, res);
+		
+		for(Vertex* u: res){
+			stream << u->id << " ";
+		}
+		stream << endl;
+
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}
+	case 22:{
+		int v;
+		ostringstream stream;
+		string out;
+		
+		cout << "\nEntre com o vertice para ser testado.\n";
+		cout << "Vertice de origem: ";
+		cin >> v;
+				
+		list<Vertex*> res;
+		
+		grafo->indirectTransitiveClosure(v, res);
+		
+		for(Vertex* u: res){
+			stream << u->id << " ";
+		}
+		stream << endl;		
+
+		out = stream.str();
+		cout << out;
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}	
+	case 23:
 		delete grafo;
 		sair = true;
 		break;
