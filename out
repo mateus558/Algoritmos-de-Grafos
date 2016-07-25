@@ -1,0 +1,20 @@
+4 3 5 2 0 1 
+4 1 6 0 3 
+Custo total da rota: 3546
+Numero de veiculos utilizados: 28
+Custo total da rota: 3036
+Numero de veiculos utilizados: 24
+Tempo para encontrar solucao: 22.8879
+
+Melhor resultado: 2619
+Custo total da rota: 2619
+Numero de veiculos utilizados: 19
+Alpha mais provavel: 0.55
+Semente usada: 987225060
+Tempo para encontrar solucao: 19.2678
+
+Melhor resultado: 2232
+Numero de veiculos utilizados: 28
+Alpha mais provavel: 0.55
+Semente usada: 974452711
+Tempo para encontrar solucao: 21.5015

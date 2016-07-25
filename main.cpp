@@ -14,6 +14,7 @@
 */
 
 #include "Graph.h"
+#include "cvrp.h"
 #include <limits>
 #include <iomanip>
 #include <fstream>
@@ -87,7 +88,11 @@ Graph* populateWeightedGraph(string fileName){
 }
 
 void clear(void){
+#ifdef __unix__
 	system("clear");
+#elif _WIN32
+	system("CLS");
+#endif
 }
 
 void waitUserAction(void){
@@ -134,7 +139,10 @@ int showMenu(void){
 	cout << "20 - Eh aresta ponte." << endl;
 	cout << "21 - Fecho transitivo direto" << endl;
 	cout << "22 - Fecho transitivo indireto" << endl;
-	cout << "23 - Sair..." << endl;
+	cout << "23 - VRP com janela de tempo (Algoritmo Guloso)" << endl;
+	cout << "24 - VRP com janela de tempo (Algoritmo Guloso Randomizado)" << endl;
+	cout << "25 - VRP com janela de tempo (Algortimo Guloso Randomizado Reativo)" << endl;
+	cout << "26 - Sair..." << endl;
 	cout << endl;
 	cout << "> ";
 	
@@ -161,6 +169,8 @@ void saveToFile(string fileName, string output){
 }
 
 void executeOption(int op, Graph *grafo, string output){
+	clear();
+	
 	switch(op){
 	case 1:{
 		int v;
@@ -546,7 +556,114 @@ void executeOption(int op, Graph *grafo, string output){
 		waitUserAction();
 		break;
 		}	
-	case 23:
+	case 23:{
+		ostringstream stream;
+		string out, instance_file;
+		CVRP problem;
+		
+		cout << "\nInforme o nome da instancia (na pasta Instances): ";
+		cin >> instance_file;
+		cout << endl;
+		
+		instance_file = "Instances/" + instance_file; 
+		problem.load_solomon_instance(instance_file);
+		Solution* S = problem.constructGreedyRandomizedSolution(0, 1);
+		
+		stream << "Custo total da rota: " << S->funcVal << endl;
+		stream << "Numero de veiculos utilizados: " << S->nVehi << endl;
+		
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}	
+	case 24:{
+		ostringstream stream;
+		string out, instance_file;
+		double alpha;
+		int seed;
+		CVRP problem;
+		
+		cout << "\nInforme o nome da instancia (na pasta Instances): ";
+		cin >> instance_file;
+		cout << endl;
+		
+		cout << "Informe o alpha: ";
+		cin >> alpha;
+		cout << endl;
+		
+		cout << "Informe a semente: ";
+		cin >> seed;
+		cout << endl;
+		
+		instance_file = "Instances/" + instance_file; 
+		problem.load_solomon_instance(instance_file);
+		Solution* S = problem.constructGreedyRandomizedSolution(alpha, seed);
+		
+		stream << "Custo total da rota: " << S->funcVal << endl;
+		stream << "Numero de veiculos utilizados: " << S->nVehi << endl;
+		
+		out = stream.str();
+		cout << out;
+		
+		saveToFile(output, out);
+		waitUserAction();
+
+		break;
+		}	
+	case 25:{
+		ostringstream stream;
+		string out, instance_file;
+		int max_iter, block_iter, gama;
+		double granularity;
+		CVRP problem;
+		
+		cout << "\nInforme o nome da instancia (na pasta Instances): ";
+		cin >> instance_file;
+		
+		cout << "Informe o maximo de iteracoes: ";
+		cin >> max_iter;
+		
+		cout << "Informe a quantidade de iteracoes por bloco: ";
+		cin >> block_iter;
+
+		cout << "Informe a granularidade: ";
+		cin >> granularity;
+		
+		cout << "Informe o gama para normalizacao (1 caso nao deseje normalizar): ";
+		cin >> gama;
+		
+		instance_file = "Instances/" + instance_file; 
+		problem.load_solomon_instance(instance_file);
+		
+		mt19937 generator(time(NULL));
+  		uniform_int_distribution<int> dis(0, INF);
+		int seed = dis(generator);
+		
+		cout << endl;
+		cout << "Gerando solucao..." << endl;
+		
+		clock_t begin = clock();				
+		Solution* S = problem.GRA(max_iter, block_iter, granularity, gama, seed);
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+		
+		stream << endl;
+		stream << "Melhor resultado: " << S->best_result << endl;
+		stream << "Numero de veiculos utilizados: " << S->nVehi << endl;
+		stream << "Alpha mais provavel: " << S->alpha << endl;
+		stream << "Semente usada: " << seed << endl;
+		stream << "Tempo para encontrar solucao: " << elapsed_secs << endl;
+		
+		out = stream.str();
+		cout << out;
+		saveToFile(output, out);
+		waitUserAction();
+		break;
+		}	
+	case 26:
 		delete grafo;
 		sair = true;
 		break;
