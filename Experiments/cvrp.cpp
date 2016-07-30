@@ -148,7 +148,7 @@ vector<vector<Costumer*> > CVRP::update_list(vector<Route*> &solution, vector<do
 	return candidates;
 }
 
-void CVRP::select_candidate(vector<Route*> &solution, vector<vector<Costumer*> > &candidates, vector<double> &times, vector<int> &route_capacity, int &n, vector<int> randPos, double alpha, int seed, mt19937 generator){
+void CVRP::select_candidate(vector<Route*> &solution, vector<vector<Costumer*> > &candidates, vector<double> &times, vector<int> &route_capacity, int &n, vector<int> randPos, double alpha, mt19937 generator){
 	
 	randPos = vector<int>(solution.size(), 0);
 	for(int i = 0; i < solution.size(); i++){	
@@ -239,7 +239,7 @@ Solution* CVRP::constructGreedyRandomizedSolution(double alpha, int seed){
 	uniform_int_distribution<int> dis(0, clients.size()-1);
 	for(int i = 0; i < solution.size(); i++){
 		solution[i] = new Route;
-		randPos.push_back(generator*alpha);
+		randPos.push_back(dis(generator)*alpha);
 	}
 	
 	//Initialize the solution with nearby close clients
@@ -253,7 +253,7 @@ Solution* CVRP::constructGreedyRandomizedSolution(double alpha, int seed){
 			sort(sol_candidates[c].begin(), sol_candidates[c].end(), saving_heuristic);
 		}
 
-		select_candidate(solution, sol_candidates, routes_times, route_capacity, n, randPos, alpha, seed, generator);
+		select_candidate(solution, sol_candidates, routes_times, route_capacity, n, randPos, alpha, generator);
 	}
 
 	vector<Route*>::iterator itr = solution.begin();
@@ -351,11 +351,12 @@ Solution* CVRP::GRA(int max_iter, int block_iter, double granularity, double gam
 		
 		S_value = S->funcVal;
 		alpha_results[a] += S_value;
+
 		if(S_value < bS->funcVal){
 			bS = S;
-			bS->alpha = alpha';
+			bS->alpha = alpha;
 		}
-		cout << S->funcVal << endl;
+
 		if(itr%block_iter == 0){ //Update vector of probabilities
 			sum = 0.0;
 

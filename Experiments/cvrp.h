@@ -113,7 +113,7 @@ class CVRP{
   	CVRP();
   	Solution* GRA(int max_iter, int block_iter, double granularity, double gama, int seed);
   	vector<vector<Costumer*> > update_list(vector<Route*> &solution, vector<double> &times, int &n);
-  	void select_candidate(vector<Route*> &, vector<vector<Costumer*> > &, vector<double> &, vector<int> &, int &, vector<int> randPos, double alpha, int seed, mt19937 generator);
+  	void select_candidate(vector<Route*> &, vector<vector<Costumer*> > &, vector<double> &, vector<int> &, int &, vector<int> randPos, double alpha, mt19937 generator);
   	Solution* constructGreedyRandomizedSolution(double alpha, int seed);
   	void shrink_routes(vector<Route*> &solution);
   	bool verify_solution(Solution *S, double &);

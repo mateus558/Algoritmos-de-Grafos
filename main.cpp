@@ -651,7 +651,7 @@ void executeOption(int op, Graph *grafo, string output){
 		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 		
 		stream << endl;
-		stream << "Melhor resultado: " << S->best_result << endl;
+		stream << "Melhor resultado: " << S->funcVal << endl;
 		stream << "Numero de veiculos utilizados: " << S->nVehi << endl;
 		stream << "Alpha mais provavel: " << S->alpha << endl;
 		stream << "Semente usada: " << seed << endl;
