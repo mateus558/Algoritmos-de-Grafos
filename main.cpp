@@ -33,7 +33,6 @@ Graph* populateWeightedGraph(string);
 int main(int argc, char** argv){
 	if(argc == 3){
 		string input(argv[1]), output(argv[2]);
-		
 		Graph *grafo = populateWeightedGraph(input);
 
 		clear();
