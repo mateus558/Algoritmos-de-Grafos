@@ -361,7 +361,7 @@ Solution* CVRP::GRA(int max_iter, int block_iter, double granularity, double gam
 			sum = 0.0;
 
 			for(i = 0; i < P.size(); i++){
-				Q[i] = (double)(pow((n_alpha[i] != 0)?alpha_results[i]/n_alpha[i]:(1.0/A.size()), gama));
+				Q[i] = (double)(pow((alpha_results[i] != 0)?bS->funcVal/alpha_results[i]:(1.0/A.size()), gama));
 				sum += Q[i];
 			}
 			

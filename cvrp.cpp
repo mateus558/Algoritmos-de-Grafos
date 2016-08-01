@@ -226,7 +226,6 @@ void CVRP::init_solution(vector<Route*> &solution, vector<double> &time, vector<
 Solution* CVRP::constructGreedyRandomizedSolution(double alpha, int seed){
 	mt19937 generator(seed);
 	int n = 0;
-	double waitTime = 0.0;
 	visited = vector<bool>(clients.size(), false);
 	int nVehi = deduce_nVehicles(0);
 	dep.nVehicles = (nVehi > 0)?nVehi:1;
@@ -239,7 +238,7 @@ Solution* CVRP::constructGreedyRandomizedSolution(double alpha, int seed){
 	uniform_int_distribution<int> dis(0, clients.size()-1);
 	for(int i = 0; i < solution.size(); i++){
 		solution[i] = new Route;
-		randPos.push_back(generator*alpha);
+		randPos.push_back(dis(generator)*alpha);
 	}
 	
 	//Initialize the solution with nearby close clients
@@ -353,14 +352,14 @@ Solution* CVRP::GRA(int max_iter, int block_iter, double granularity, double gam
 		alpha_results[a] += S_value;
 		if(S_value < bS->funcVal){
 			bS = S;
-			bS->alpha = alpha';
+			bS->alpha = alpha;
 		}
 		cout << S->funcVal << endl;
 		if(itr%block_iter == 0){ //Update vector of probabilities
 			sum = 0.0;
 
 			for(i = 0; i < P.size(); i++){
-				Q[i] = (double)(pow((n_alpha[i] != 0)?alpha_results[i]/n_alpha[i]:(1.0/A.size()), gama));
+				Q[i] = (double)(pow((alpha_results[i] != 0)?bS->funcVal/alpha_results[i]:(1.0/A.size()), gama));
 				sum += Q[i];
 			}
 			

@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
 		int seed = stoi(s), bseed;
 		Solution *bS = new Solution;
 		bS->funcVal = INF;
-
+		clock_t begin = clock();				
 		for(int i = 0; i < 500; i++){
 			seed += 10;
 			Solution *S = problem.constructGreedyRandomizedSolution(stod(a), seed);
@@ -28,7 +28,9 @@ int main(int argc, char *argv[]){
 				bseed = seed;
 			}
 		}
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 		
-		cout << bS->funcVal << "," << bS->nVehi << "," << stod(a) << "," << bseed;
+		cout << bS->funcVal << "," << bS->nVehi << "," << stod(a) << "," << bseed << "," << elapsed_secs;
 	}
 }
